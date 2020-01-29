@@ -1,0 +1,84 @@
+"
+" Color scheme
+colorscheme Tomorrow-Night-Eighties
+
+" enable mouse
+set mouse=a
+
+highlight SpellCap cterm=underline ctermbg=none
+highlight SpellBad cterm=underline ctermbg=none
+
+autocmd BufWritePre * %s/\s\+$//e
+
+let mapleader = ","
+
+nnoremap <silent> <space> :noh<CR>
+nnoremap <silent> <leader>f :silent! w!<CR>:FZF<CR>
+nnoremap <silent> <leader>F :silent! w!<CR>:FZF<CR>
+nnoremap <silent> <C-p> :History<CR>
+
+imap bp<tab> binding.pry<ESC>
+
+vmap <leader>S :S/
+vmap <leader>s :s/
+nmap <leader>S :%s/
+nmap <leader>s :s/
+
+nnoremap <leader><space> i <ESC>
+nnoremap [<space> :put! ="<CR>j
+nnoremap ]<space> :put ="<CR><ESC>h
+
+set nowrap
+
+nnoremap \ :NERDTreeToggle<CR>
+map \| :NERDTreeFind<CR>
+
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+
+let g:fzf_action = {
+  \ 'ctrl-q': function('s:build_quickfix_list'),
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+let g:rg_command = '
+  \ rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --color "always"
+  \ -g "*.{js,json,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf}"
+  \ -g "!{.git,node_modules,vendor}/*" '
+
+let g:VimuxUseNearest = 1
+" Vimux config https://github.com/benmills/vimux/blob/master/doc/vimux.txt
+function RubyTest()
+  if @% =~# '_spec.rb'
+    return " rspec "
+  elseif @% =~# '_test.rb'
+    return " rails test "
+  else
+    echom 'Oops not a spec file'
+  endif
+endfunction
+" Run the current file with rspec
+map <Leader>rr :silent! w<CR> :silent! VimuxRunCommand("bundle exec" . RubyTest() . bufname("%"))<CR>
+" Run the current line with rspec
+map <Leader>rt :silent! w<CR> :silent! VimuxRunCommand("bundle exec" . RubyTest() . bufname("%") . ":" . line("."))<CR>
+nnoremap <leader>vl :w!<CR>:call VimuxRunLastCommand()<CR>
+nnoremap <leader>vp :w!<CR>:call VimuxPromptCommand()<CR>
+
+nnoremap frz<tab> ggO<ESC>ggO# frozen_string_literal: true<ESC>
+imap frz<tab> # frozen_string_literal: true<ESC><ESC>
+
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+" Likewise, Files command with preview window
+command! -bang -nargs=? -complete=dir Files
+  \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)

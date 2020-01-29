@@ -1,0 +1,17 @@
+[alias]
+  l = log --pretty=colored
+  lg = log --graph --format='%C(bold red)%h% %C(auto)%d%Creset <%Cgreen%an> %Creset%s %Cgreen- %C(blue)%ar'
+  br = branch
+  ci = commit
+  fixup = commit --fixup
+[pretty]
+  colored = format:%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset
+[user]
+  name = Trevor John
+  email = trevor@john.tj
+[apply]
+  whitespace = fix
+[core]
+  whitespace = trailing-space,space-before-tab
+[rebase]
+  autosquash = true
