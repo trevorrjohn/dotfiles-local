@@ -25,8 +25,8 @@ nmap <leader>S :%s/
 nmap <leader>s :s/
 
 nnoremap <leader><space> i <ESC>
-nnoremap [<space> :put! ="<CR>j
-nnoremap ]<space> :put ="<CR><ESC>h
+nnoremap [<space> :put! _<ESC>j
+nnoremap ]<space> :put _<ESC>k
 
 set nowrap
 
