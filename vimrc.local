@@ -69,7 +69,9 @@ map <Leader>rt :silent! w<CR> :silent! VimuxRunCommand("bundle exec" . RubyTest(
 nnoremap <leader>vl :w!<CR>:call VimuxRunLastCommand()<CR>
 nnoremap <leader>vp :w!<CR>:call VimuxPromptCommand()<CR>
 
-nnoremap frz<tab> ggO<ESC>ggO# frozen_string_literal: true<ESC>
+imap <c-l> <space>=><space>
+
+map frz<tab> ggO<ESC>ggO# frozen_string_literal: true<ESC>
 imap frz<tab> # frozen_string_literal: true<ESC><ESC>
 
 command! -bang -nargs=* Rg
