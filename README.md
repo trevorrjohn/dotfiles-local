@@ -17,5 +17,5 @@ git submodule update --init
 ```bash
 cd ~/dotfiles-local
 mkdir -p ~/.config/alacritty
-ln -s alacritty.yml ~/.config/alacritty/alacritty.yml
+ln -fs $(pwd)/alacritty.yml ~/.config/alacritty/alacritty.yml
 ```
