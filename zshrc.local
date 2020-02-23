@@ -1,5 +1,6 @@
 . $HOME/dotfiles-local/zsh/z/z.sh
 export PATH=/usr/local/bin:${PATH}
 export PATH="/usr/local/opt/ruby/bin:$PATH"
+export GPG_TTY=$(tty)
 
 eval "$(rbenv init -)"
