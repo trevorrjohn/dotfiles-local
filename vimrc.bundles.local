@@ -1,8 +1,8 @@
 UnPlug 'elixir-lang/vim-elixir'
 UnPlug 'kchmck/vim-coffee-script'
 UnPlug 'slim-template/vim-slim'
+UnPlug 'ctrlpvim/ctrlp.vim'
 
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'fatih/vim-go'
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
