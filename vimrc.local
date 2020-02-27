@@ -19,9 +19,9 @@ nnoremap <silent> <C-p> :History<CR>
 
 imap bp<tab> binding.pry<ESC>
 
-vmap <leader>S :S/
+vmap <leader><shift>s :%s/
 vmap <leader>s :s/
-nmap <leader>S :%s/
+nmap <leader><shift>s :%s/
 nmap <leader>s :s/
 
 nnoremap <leader><space> i <ESC>
