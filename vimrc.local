@@ -8,6 +8,8 @@ set mouse=a
 
 set hlsearch
 nnoremap <silent> <space> :noh<CR>
+nnoremap <c-s> :s/
+nnoremap <c-a> :%s/
 
 imap bp<tab> binding.pry<ESC>
 imap <c-l> <space>=><space>
