@@ -1,30 +1,17 @@
-"
 " Color scheme
 colorscheme Tomorrow-Night-Eighties
 
 " enable mouse
 set mouse=a
 
-highlight SpellCap cterm=underline ctermbg=none
-highlight SpellBad cterm=underline ctermbg=none
+"let mapleader = ","
 
-autocmd BufWritePre * %s/\s\+$//e
-
-let mapleader = ","
-
+set hlsearch
 nnoremap <silent> <space> :noh<CR>
-nnoremap <silent> <leader>f :silent! w!<CR>:FZF<CR>
-nnoremap <silent> <leader>F :silent! w!<CR>:FZF<CR>
-nnoremap <silent> <C-p> :History<CR>
 
 imap bp<tab> binding.pry<ESC>
+imap <c-l> <space>=><space>
 
-vmap <leader><shift>s :%s/
-vmap <leader>s :s/
-nmap <leader><shift>s :%s/
-nmap <leader>s :s/
-
-nnoremap <leader><space> i <ESC>
 nnoremap [<space> :put! _<ESC>j
 nnoremap ]<space> :put _<ESC>k
 
@@ -53,28 +40,23 @@ let g:rg_command = '
   \ -g "*.{js,json,php,md,styl,jade,html,config,py,cpp,c,go,hs,rb,conf}"
   \ -g "!{.git,node_modules,vendor}/*" '
 
-let g:VimuxUseNearest = 1
-" Vimux config https://github.com/benmills/vimux/blob/master/doc/vimux.txt
-function RubyTest()
-  if @% =~# '_spec.rb'
-    return " rspec "
-  elseif @% =~# '_test.rb'
-    return " rails test "
-  else
-    echom 'Oops not a spec file'
-  endif
-endfunction
-" Run the current file with rspec
-map <Leader>rr :silent! w<CR> :silent! VimuxRunCommand("bundle exec" . RubyTest() . bufname("%"))<CR>
-" Run the current line with rspec
-map <Leader>rt :silent! w<CR> :silent! VimuxRunCommand("bundle exec" . RubyTest() . bufname("%") . ":" . line("."))<CR>
-nnoremap <leader>vl :w!<CR>:call VimuxRunLastCommand()<CR>
-nnoremap <leader>vp :w!<CR>:call VimuxPromptCommand()<CR>
+"let g:VimuxUseNearest = 1
 
-imap <c-l> <space>=><space>
+" Prompt for a command to run
+map <Leader>vp :VimuxPromptCommand<CR>
+" Run last command executed by VimuxRunCommand
+map <Leader>vl :VimuxRunLastCommand<CR>
+" Inspect runner pane
+map <Leader>vi :VimuxInspectRunner<CR>
+" Close vim tmux runner opened by VimuxRunCommand
+map <Leader>vq :VimuxCloseRunner<CR>
+" Interrupt any command running in the runner pane
+map <Leader>vx :VimuxInterruptRunner<CR>
+" Zoom the runner pane (use <bind-key> z to restore runner pane)
+map <Leader>vz :call VimuxZoomRunner()<CR>
 
 map frz<tab> ggO<ESC>ggO# frozen_string_literal: true<ESC>
-imap frz<tab> # frozen_string_literal: true<ESC><ESC>
+imap frz<tab> # frozen_string_literal: true<ESC>
 
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
@@ -86,3 +68,16 @@ command! -bang -nargs=* Rg
 " Likewise, Files command with preview window
 command! -bang -nargs=? -complete=dir Files
   \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+function! RipgrepFzf(query, fullscreen)
+  let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case %s || true'
+  let initial_command = printf(command_fmt, shellescape(a:query))
+  let reload_command = printf(command_fmt, '{q}')
+  let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+  call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+
+noremap <c-p> :History<cr>
+noremap <Leader>f :Files<cr>
