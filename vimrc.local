@@ -13,8 +13,8 @@ hi SpellRare      term=reverse ctermbg=255 gui=undercurl guisp=Magenta
 hi SpellLocal     term=underline ctermbg=255 gui=undercurl guisp=DarkCyan
 
 nnoremap <silent> <space> :noh<CR>
-nnoremap <c-s> :s/
-nnoremap <c-a> :%s/
+nnoremap <C-s> :s/
+nnoremap <C-q> :%s/
 
 imap bp<tab> binding.pry<ESC>
 imap <c-l> <space>=><space>
