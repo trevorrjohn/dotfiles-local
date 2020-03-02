@@ -15,3 +15,5 @@
   whitespace = trailing-space,space-before-tab
 [rebase]
   autosquash = true
+[fetch]
+  prune = true
