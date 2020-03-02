@@ -7,6 +7,11 @@ set mouse=a
 "let mapleader = ","
 
 set hlsearch
+hi SpellBad       term=reverse ctermbg=255 gui=undercurl guisp=Red
+hi SpellCap       term=reverse ctermbg=255 gui=undercurl guisp=Blue
+hi SpellRare      term=reverse ctermbg=255 gui=undercurl guisp=Magenta
+hi SpellLocal     term=underline ctermbg=255 gui=undercurl guisp=DarkCyan
+
 nnoremap <silent> <space> :noh<CR>
 nnoremap <c-s> :s/
 nnoremap <c-a> :%s/
@@ -56,6 +61,9 @@ map <Leader>vq :VimuxCloseRunner<CR>
 map <Leader>vx :VimuxInterruptRunner<CR>
 " Zoom the runner pane (use <bind-key> z to restore runner pane)
 map <Leader>vz :call VimuxZoomRunner()<CR>
+
+" make test commands execute using vimux
+let test#strategy = "vimux"
 
 map frz<tab> ggO<ESC>ggO# frozen_string_literal: true<ESC>
 imap frz<tab> # frozen_string_literal: true<ESC>
