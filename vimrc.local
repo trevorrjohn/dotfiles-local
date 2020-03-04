@@ -7,10 +7,10 @@ set mouse=a
 "let mapleader = ","
 
 set hlsearch
-hi SpellBad       term=reverse ctermbg=255 gui=undercurl guisp=Red
-hi SpellCap       term=reverse ctermbg=255 gui=undercurl guisp=Blue
-hi SpellRare      term=reverse ctermbg=255 gui=undercurl guisp=Magenta
-hi SpellLocal     term=underline ctermbg=255 gui=undercurl guisp=DarkCyan
+hi SpellBad       term=reverse ctermbg=240 gui=undercurl guisp=Red
+hi SpellCap       term=reverse ctermbg=240 gui=undercurl guisp=Blue
+hi SpellRare      term=reverse ctermbg=240 gui=undercurl guisp=Magenta
+hi SpellLocal     term=underline ctermbg=240 gui=undercurl guisp=DarkCyan
 
 imap bp<tab> binding.pry<ESC>
 imap <c-l> <space>=><space>
