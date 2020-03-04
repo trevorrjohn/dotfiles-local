@@ -19,3 +19,4 @@
   prune = true
 [commit]
   verbose = true
+  gpgsign = true
