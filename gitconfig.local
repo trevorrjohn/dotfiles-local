@@ -17,3 +17,5 @@
   autosquash = true
 [fetch]
   prune = true
+[commit]
+  verbose = true
