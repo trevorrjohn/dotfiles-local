@@ -1,9 +1,9 @@
 UnPlug 'elixir-lang/vim-elixir'
 UnPlug 'kchmck/vim-coffee-script'
 UnPlug 'slim-template/vim-slim'
+UnPlug 'benmills/vimux'
 
 Plug 'flazz/vim-colorschemes'
-Plug 'felixhummel/setcolors.vim'
 Plug 'scrooloose/nerdtree'
-Plug 'benmills/vimux'
 Plug 'godlygeek/tabular'
+Plug 'tpope/vim-dispatch'
