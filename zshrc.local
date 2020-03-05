@@ -1,6 +1,18 @@
 . $HOME/dotfiles-local/zsh/z/z.sh
+
+# Brew path
 export PATH=/usr/local/bin:${PATH}
-export PATH="/usr/local/opt/ruby/bin:$PATH"
+
+# GPG Key TTY
 export GPG_TTY=$(tty)
 
+function todo {
+  touch ~/.todo
+  local todo
+  todo="$*"
+  echo $todo >> ~/.todo
+  cat -n ~/.todo
+}
+
+# RBenv init
 eval "$(rbenv init -)"
