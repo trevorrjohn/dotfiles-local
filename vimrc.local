@@ -73,3 +73,5 @@ command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 noremap <c-p> :History<cr>
 noremap <Leader>f :Files<cr>
+
+autocmd BufWritePre * %s/\s\+$//e
