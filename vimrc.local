@@ -12,6 +12,8 @@ hi SpellCap       term=reverse ctermbg=240 gui=undercurl guisp=Blue
 hi SpellRare      term=reverse ctermbg=240 gui=undercurl guisp=Magenta
 hi SpellLocal     term=underline ctermbg=240 gui=undercurl guisp=DarkCyan
 
+nnoremap <C-c> :noh<ESC>
+
 imap bp<tab> binding.pry<ESC>
 imap <c-l> <space>=><space>
 
