@@ -14,5 +14,8 @@ function todo {
   cat -n ~/.todo
 }
 
+# GOPATH
+export GOPATH=$HOME/workspace/go
+
 # RBenv init
 eval "$(rbenv init -)"
