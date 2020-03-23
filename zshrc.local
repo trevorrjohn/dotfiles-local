@@ -15,7 +15,11 @@ function todo {
 }
 
 # GOPATH
-export GOPATH=$HOME/workspace/go
+if command -v go > /dev/null
+then
+  mkdir -p $HOME/workspace/go
+  export GOPATH=$HOME/workspace/go
+fi
 
 # RBenv init
 eval "$(rbenv init -)"

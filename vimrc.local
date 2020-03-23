@@ -77,3 +77,9 @@ noremap <c-p> :History<cr>
 noremap <Leader>f :Files<cr>
 
 autocmd BufWritePre * %s/\s\+$//e
+
+" Auto save when buffer lose focus
+autocmd FocusLost,BufLeave * silent! wa
+
+" enable AutoSave on Vim startup
+let g:auto_save = 1
