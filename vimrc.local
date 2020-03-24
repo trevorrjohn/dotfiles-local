@@ -83,3 +83,5 @@ autocmd FocusLost,BufLeave * silent! wa
 
 " enable AutoSave on Vim startup
 let g:auto_save = 1
+" disable auto save on insert mode because it jumps to beginning of line
+let g:auto_save_in_insert_mode = 0
