@@ -23,3 +23,16 @@ fi
 
 # RBenv init
 eval "$(rbenv init -)"
+
+# Google Cloud SDK
+
+gcloudSdkPath="/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
+for file in "path" "completion" ; do
+  [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
+    source "${gcloudSdkPath}/${file}.zsh.inc"
+done
+
+if command -v kubectl > /dev/null
+then
+  source <(kubectl completion zsh)
+fi
