@@ -32,6 +32,11 @@ for file in "path" "completion" ; do
     source "${gcloudSdkPath}/${file}.zsh.inc"
 done
 
+if command -v tk > /dev/null
+then
+  tk complete
+fi
+
 if command -v kubectl > /dev/null
 then
   source <(kubectl completion zsh)
