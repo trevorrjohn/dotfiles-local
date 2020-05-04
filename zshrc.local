@@ -34,7 +34,7 @@ done
 
 if command -v tk > /dev/null
 then
-  tk complete
+  tk complete 2> /dev/null
 fi
 
 if command -v kubectl > /dev/null
