@@ -19,6 +19,7 @@ if command -v go > /dev/null
 then
   mkdir -p $HOME/workspace/go
   export GOPATH=$HOME/workspace/go
+  export PATH="${GOPATH}/bin":${PATH}
 fi
 
 # RBenv init

@@ -85,3 +85,6 @@ autocmd FocusLost,BufLeave * silent! wa
 let g:auto_save = 1
 " disable auto save on insert mode because it jumps to beginning of line
 let g:auto_save_in_insert_mode = 0
+
+" disable auto fmt of jsonnet
+let g:jsonnet_fmt_on_save = 0
