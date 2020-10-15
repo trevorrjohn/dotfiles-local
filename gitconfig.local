@@ -20,3 +20,6 @@
 [commit]
   verbose = true
   gpgsign = true
+[filter "remove-trailing-whitespace"]
+  clean = sed -E 's/[[:space:]]*$//'
+  smudge = cat

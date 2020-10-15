@@ -27,11 +27,19 @@ eval "$(rbenv init -)"
 
 # Google Cloud SDK
 
-gcloudSdkPath="$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
+gcloudSdkPath="/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
 for file in "path" "completion" ; do
   [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
     source "${gcloudSdkPath}/${file}.zsh.inc"
 done
+
+if command -v docker-machine > /dev/null
+then
+  if docker-machine active > /dev/null 2>&1 ; then
+    eval "$(docker-machine env $(docker-machine active))"
+  fi
+fi
+
 
 if command -v tk > /dev/null
 then
@@ -47,3 +55,6 @@ if command -v helm > /dev/null
 then
   source <(helm completion zsh)
 fi
+
+stty icrnl
+export PATH="/usr/local/opt/node@12/bin:$PATH"

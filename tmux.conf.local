@@ -28,3 +28,6 @@ set -g mouse on
 
 # switch windows saves vim
 set -g focus-events on
+
+bind C-k resize-pane -U 1
+bind C-j resize-pane -D 1
