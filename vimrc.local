@@ -74,7 +74,8 @@ endfunction
 command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
 
 noremap <c-p> :History<cr>
-noremap <Leader>f :Files<cr>
+noremap <Leader>f :GFiles<cr>
+noremap <Leader>F :Files<cr>
 
 autocmd BufWritePre * %s/\s\+$//e
 
