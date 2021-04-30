@@ -5,6 +5,7 @@
   ci = commit
   fixup = commit --fixup
   squash = commit --squash
+  sha = rev-parse HEAD
 [pretty]
   colored = format:%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset
 [user]
