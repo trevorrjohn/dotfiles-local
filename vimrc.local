@@ -89,3 +89,5 @@ let g:auto_save_in_insert_mode = 0
 
 " auto fmt of jsonnet
 let g:jsonnet_fmt_on_save = 1
+
+imap fd <ESC>

@@ -58,5 +58,8 @@ then
   source <(helm completion zsh)
 fi
 
+alias python="/usr/local/bin/python3"
+
+
 stty icrnl
 export PATH="/usr/local/opt/node@14/bin:$PATH"
