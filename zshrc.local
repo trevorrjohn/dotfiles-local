@@ -22,9 +22,6 @@ then
   export PATH="${GOPATH}/bin":${PATH}
 fi
 
-# RBenv init
-eval "$(rbenv init -)"
-
 # Google Cloud SDK
 
 export CLOUDSDK_PYTHON="/usr/bin/python"
