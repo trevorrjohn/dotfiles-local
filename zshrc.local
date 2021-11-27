@@ -24,13 +24,29 @@ fi
 
 # Google Cloud SDK
 
-export CLOUDSDK_PYTHON="/usr/bin/python"
+if test -f "~/.asdf/shims/python" ; then
+  export CLOUDSDK_PYTHON="/home/trevor/.asdf/shims/python"
+fi
 
-gcloudSdkPath="/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
-for file in "path" "completion" ; do
-  [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
-    source "${gcloudSdkPath}/${file}.zsh.inc"
-done
+if test -f "/usr/bin/python" ; then
+  export CLOUDSDK_PYTHON="/usr/bin/python"
+fi
+
+if test -f "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"; then
+  gcloudSdkPath="/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
+  for file in "path" "completion" ; do
+    [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
+      source "${gcloudSdkPath}/${file}.zsh.inc"
+  done
+fi
+
+if test -f "~/google-cloud-sdk/"; then
+  gcloudSdkPath="~/google-cloud-sdk"
+  for file in "path" "completion" ; do
+    [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
+      source "${gcloudSdkPath}/${file}.zsh.inc"
+  done
+fi
 
 if command -v docker-machine > /dev/null
 then
@@ -55,7 +71,8 @@ then
   source <(helm completion zsh)
 fi
 
-alias python="/usr/local/bin/python3"
+
+# alias python="/usr/local/bin/python3"
 
 
 stty icrnl
