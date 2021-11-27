@@ -32,7 +32,7 @@ if test -f "/usr/bin/python" ; then
   export CLOUDSDK_PYTHON="/usr/bin/python"
 fi
 
-if test -f "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"; then
+if test -d "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"; then
   gcloudSdkPath="/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
   for file in "path" "completion" ; do
     [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
@@ -40,7 +40,7 @@ if test -f "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"; then
   done
 fi
 
-if test -f "~/google-cloud-sdk/"; then
+if test -d "~/google-cloud-sdk/"; then
   gcloudSdkPath="~/google-cloud-sdk"
   for file in "path" "completion" ; do
     [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
