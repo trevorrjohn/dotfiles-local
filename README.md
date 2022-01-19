@@ -28,7 +28,7 @@ Copy over gpg agent config so that gpg doesn't get logged out every 5 seconds
 # install gpg
 brew install gpg
 
-# import key from backup (Keybase?)
+# import key from backup (1Password)
 gpg --import gpg-8D9E4AB933454261.key
 
 # setup config so that password is remembered for a bit
