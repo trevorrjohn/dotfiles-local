@@ -1,5 +1,10 @@
+require("hs.ipc")
+
+-- Reload from the command line
+-- hs -c "hs.reload()"
+hs.ipc.cliInstall()
+
 hs.loadSpoon("ShiftIt")
--- spoon.ShiftIt:bindHotkeys({})
 local obj = {}
 obj.mash = { 'ctrl', 'alt', 'cmd', 'shift' }
 obj.mapping = {
@@ -21,4 +26,5 @@ obj.mapping = {
   resizeIn = { obj.mash, '-' }
 }
 
-spoon.ShiftIt:bindHotkeys(obj.mapping);
+-- spoon.ShiftIt:bindHotkeys(obj.mapping);
+spoon.ShiftIt:bindHotkeys({})
