@@ -34,3 +34,27 @@ gpg --import gpg-8D9E4AB933454261.key
 # setup config so that password is remembered for a bit
 ln -fs $(pwd)/gpg-agent.conf ~/.gnupg/gpg-agent.conf
 ```
+
+5. Install Tmux
+
+```bash
+brew install tmux
+```
+
+5. Hammerspoon
+
+Download [Hammerspoon](https://www.hammerspoon.org)
+
+```bash
+brew install --cask hammerspoon
+```
+
+Download [Hammerspoon-Shiftit](https://github.com/peterklijn/hammerspoon-shiftit)
+
+Symlink `init.lua`
+
+```bash
+mkdir -p  ~/.hammerspoon/
+ln -fs $(pwd)/init.lua ~/.hammerspoon/init.lua
+```
+
