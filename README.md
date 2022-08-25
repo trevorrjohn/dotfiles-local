@@ -13,7 +13,6 @@ git submodule update --init
 
 3. If using alacritty
 
-
 ```bash
 cd ~/dotfiles-local
 mkdir -p ~/.config/alacritty
@@ -57,4 +56,12 @@ Symlink `init.lua`
 mkdir -p  ~/.hammerspoon/
 ln -fs $(pwd)/init.lua ~/.hammerspoon/init.lua
 ```
+
+6. Git config
+
+```sh
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+```
+
 

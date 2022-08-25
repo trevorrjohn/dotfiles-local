@@ -8,9 +8,6 @@
   sha = rev-parse HEAD
 [pretty]
   colored = format:%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset
-[user]
-  name = Trevor John
-  email = trevor@john.tj
 [apply]
   whitespace = fix
 [core]
