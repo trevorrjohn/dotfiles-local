@@ -1,3 +1,25 @@
+# Pre-Installation
+
+Copy private/public key to .ssh dir
+
+```
+mv ssh-key.pub ssh-key ~/.ssh
+
+# start the ssh-agent
+eval "$(ssh-agent -s)"
+
+# tell ssh to use ssh key
+cat > ~/.ssh/config <<-EOF
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/id_ed25519
+EOF
+
+# test your connection
+ssh -T git@github.com
+```
+
 # Installation
 
 1. clone down dotfiles dirs (Thoughtbots and this one)
