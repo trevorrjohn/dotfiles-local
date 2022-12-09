@@ -28,6 +28,12 @@ if test -f "~/.asdf/shims/python" ; then
   export CLOUDSDK_PYTHON="/home/trevor/.asdf/shims/python"
 fi
 
+if test -d "$HOME/.asdf" ; then
+  . $HOME/.asdf/asdf.sh
+  fpath=(${ASDF_DIR}/completions $fpath)
+  autoload -Uz compinit && compinit
+fi
+
 if test -f "/usr/bin/python" ; then
   export CLOUDSDK_PYTHON="/usr/bin/python"
 fi
