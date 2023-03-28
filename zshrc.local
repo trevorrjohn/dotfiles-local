@@ -38,12 +38,13 @@ if test -f "/usr/bin/python" ; then
   export CLOUDSDK_PYTHON="/usr/bin/python"
 fi
 
-if test -d "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"; then
-  gcloudSdkPath="/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
+gcloudSdkPath="${HOMEBREW_PREFIX}/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
+if test -d "${gcloudSdkPath}"; then
   for file in "path" "completion" ; do
     [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
       source "${gcloudSdkPath}/${file}.zsh.inc"
   done
+  export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 fi
 
 if test -d "~/google-cloud-sdk/"; then
