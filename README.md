@@ -49,8 +49,14 @@ Copy over gpg agent config so that gpg doesn't get logged out every 5 seconds
 # install gpg
 brew install gpg
 
+# make a repo
+mkdir ~/.gpg-keys
+
+# Download the gpg key from 1Password
+mv ~/Downloads/gpg-8D9E4AB933454261.key ~/.gpg-keys/
+
 # import key from backup (1Password)
-gpg --import gpg-8D9E4AB933454261.key
+gpg --import ~/.gpg-keys/gpg-8D9E4AB933454261.key
 
 # setup config so that password is remembered for a bit
 ln -fs $(pwd)/gpg-agent.conf ~/.gnupg/gpg-agent.conf
@@ -67,10 +73,12 @@ brew install tmux
 Download [Hammerspoon](https://www.hammerspoon.org)
 
 ```bash
-brew install --cask hammerspoon
+brew install hammerspoon
 ```
 
-Download [Hammerspoon-Shiftit](https://github.com/peterklijn/hammerspoon-shiftit)
+Download [Hammerspoon-Shiftit](https://github.com/peterklijn/hammerspoon-shiftit/raw/master/Spoons/ShiftIt.spoon.zip)
+
+Double click to install ShiftIt spoon.
 
 Symlink `init.lua`
 
