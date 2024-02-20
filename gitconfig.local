@@ -32,7 +32,6 @@
   whitespace = trailing-space,space-before-tab
   excludesfile = ~/.gitignore
   autocrlf = input
-  pager = delta
 [pull]
   rebase = true
   ff = only
