@@ -1,24 +1,59 @@
-[alias]
-  l = log --pretty=colored
-  lg = log --graph --format='%C(bold red)%h% %C(auto)%d%Creset <%Cgreen%an> %Creset%s %Cgreen- %C(blue)%ar'
-  br = branch
-  ci = commit
-  fixup = commit --fixup
-  squash = commit --squash
-  sha = rev-parse HEAD
+[init]
+  defaultBranch = main
+  templatedir = ~/.git_template
 [pretty]
   colored = format:%Cred%h%Creset %s %Cgreen(%cr) %C(bold blue)%an%Creset
 [apply]
   whitespace = fix
-[core]
-  whitespace = trailing-space,space-before-tab
-[rebase]
-  autosquash = true
-[fetch]
-  prune = true
-[commit]
-  verbose = true
-  gpgsign = true
 [filter "remove-trailing-whitespace"]
   clean = sed -E 's/[[:space:]]*$//'
   smudge = cat
+[help]
+  autocorrect = 10
+[push]
+  default = current
+[color]
+  ui = auto
+[alias]
+  aa = add --all
+  ap = add --patch
+  br = branch
+  branches = for-each-ref --sort=-committerdate --format=\"%(color:blue)%(authordate:relative)\t%(color:red)%(authorname)\t%(color:white)%(color:bold)%(refname:short)\" refs/remotes
+  ci = commit -v
+  co = checkout
+  fixup = commit --fixup
+  l = log --pretty=colored
+  lg = log --graph --format='%C(bold red)%h% %C(auto)%d%Creset <%Cgreen%an> %Creset%s %Cgreen- %C(blue)%ar'
+  pf = push --force-with-lease
+  sha = rev-parse HEAD
+  squash = commit --squash
+  st = status
+[core]
+  whitespace = trailing-space,space-before-tab
+  excludesfile = ~/.gitignore
+  autocrlf = input
+  pager = delta
+[pull]
+  rebase = true
+  ff = only
+[merge]
+  ff = only
+  conflictstyle = zdiff3
+[commit]
+  template = ~/.gitmessage
+  gpgsign = true
+  verbose = true
+[fetch]
+  prune = true
+[rebase]
+  autosquash = true
+  autostash = true
+[diff]
+  colorMoved = zebra
+  algorithm = histogram
+[user]
+  signingkey = 8D9E4AB933454261
+  name = Trevor John
+  email = trevor@john.tj
+[rerere]
+  enabled = true
