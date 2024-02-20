@@ -93,3 +93,21 @@ ln -fs $(pwd)/init.lua ~/.hammerspoon/init.lua
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 ```
+
+7. Neovim
+
+```sh
+brew install neovim
+# Make config dir
+mkdir -p ~/.config/nvim
+Sym link init files
+ln -fs $(pwd)/nvim.init.vim ~/.config/nvim/init.vim
+ln -fs $(pwd)/nvim.init.lua ~/.config/nvim/init.lua
+```
+
+8. Nerdfonts
+
+Install some nice fonts
+```sh
+brew tap homebrew/cask-fonts && brew install --cask font-cousine
+```

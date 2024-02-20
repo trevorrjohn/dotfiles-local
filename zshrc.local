@@ -28,7 +28,9 @@ if test -f "~/.asdf/shims/python" ; then
   export CLOUDSDK_PYTHON="/home/trevor/.asdf/shims/python"
 fi
 
-if test -d "$HOME/.asdf" ; then
+if test -d "$HOMEBREW_CELLAR/asdf" ; then
+  . $(brew --prefix asdf)/libexec/asdf.sh
+elif test -d "$HOME/.asdf" ; then
   . $HOME/.asdf/asdf.sh
   fpath=(${ASDF_DIR}/completions $fpath)
   autoload -Uz compinit && compinit
@@ -81,6 +83,15 @@ fi
 
 # alias python="/usr/local/bin/python3"
 
+if type brew &> /dev/null ; then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
 
 stty icrnl
 export PATH="/usr/local/opt/node@14/bin:$PATH"
+
+# pylsp
+# https://github.com/jdhao/nvim-config/blob/master/docs/README.md#python-lsp-server
