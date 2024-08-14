@@ -20,29 +20,36 @@
 #   - Handles 'cd' with no arguments (change to home directory)
 #   - Handles spaces in directory names
 cd() {
-    old_dir="$PWD"
+  old_dir="$PWD"
 
-    # Check if another cd function is defined
-    if type cd_func > /dev/null 2>&1; then
-        cd_func "$@"
+  # Check if another cd function is defined
+  if (( $+functions[cd_func] )); then
+    cd_func "$@"
+  else
+    # Use builtin cd for zsh, fallback to command cd for other shells
+    if [ -n "$ZSH_VERSION" ]; then
+      builtin cd "$@"
     else
-        # Attempt to change directory using the built-in cd
-        if ! command cd "$@" 2>/dev/null; then
-            echo "cd: no such file or directory: $*" >&2
-            return 1
-        fi
+      command cd "$@"
+    fi
+  fi
+
+  if [ $? -ne 0 ]; then
+    echo "cd: no such file or directory: $*" >&2
+    return 1
+  fi
+
+  if [ "$PWD" != "$old_dir" ]; then
+    # Check if old directory still exists and had bin/rails
+    if [ -d "$old_dir" ] && [ -f "$old_dir/bin/rails" ]; then
+      remove_from_path "$old_dir/bin"
+      echo "Removed $old_dir/bin from PATH"
     fi
 
-    # The rest of the function remains the same
-    if [ "$PWD" != "$old_dir" ]; then
-        # Check if old directory still exists and had bin/rails
-        if [ -d "$old_dir" ] && [ -f "$old_dir/bin/rails" ]; then
-            remove_from_path "$old_dir/bin"
-        fi
-
-        # Check if new directory has bin/rails
-        if [ -f "./bin/rails" ] && [ -r "./bin/rails" ]; then
-            add_to_path "$PWD/bin"
-        fi
+    # Check if new directory has bin/rails
+    if [ -f "./bin/rails" ] && [ -r "./bin/rails" ]; then
+      add_to_path "$PWD/bin"
+      echo "Added $PWD/bin to PATH"
     fi
+  fi
 }
