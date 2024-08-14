@@ -1,4 +1,7 @@
 . $HOME/dotfiles-local/zsh/z/z.sh
+. $HOME/dotfiles-local/zsh/add_to_path/add_to_path.sh
+. $HOME/dotfiles-local/zsh/remove_from_path/remove_from_path.sh
+. $HOME/dotfiles-local/zsh/rails_cd/rails_cd.sh
 
 # Brew path
 export PATH=/usr/local/bin:${PATH}
