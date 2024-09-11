@@ -96,5 +96,10 @@ fi
 stty icrnl
 export PATH="/usr/local/opt/node@14/bin:$PATH"
 
-# pylsp
-# https://github.com/jdhao/nvim-config/blob/master/docs/README.md#python-lsp-server
+if command -v ngrok &>/dev/null; then
+  eval "$(ngrok completion)"
+fi
+
+if command -v nvim  > /dev/null ; then
+  alias vim=nvim
+fi
