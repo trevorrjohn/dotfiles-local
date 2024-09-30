@@ -31,6 +31,14 @@ if test -f "~/.asdf/shims/python" ; then
   export CLOUDSDK_PYTHON="/home/trevor/.asdf/shims/python"
 fi
 
+if command -v brew > /dev/null ; then
+  export HOMEBREW_PREFIX=/opt/homebrew
+fi
+
+# needed for postgres ASDF install
+# https://github.com/smashedtoatoms/asdf-postgres?tab=readme-ov-file#mac
+export PKG_CONFIG_PATH="/opt/homebrew/bin/pkg-config:$(brew --prefix icu4c)/lib/pkgconfig:$(brew --prefix curl)/lib/pkgconfig:$(brew --prefix zlib)/lib/pkgconfig"
+
 if test -d "$HOMEBREW_CELLAR/asdf" ; then
   . $(brew --prefix asdf)/libexec/asdf.sh
 elif test -d "$HOME/.asdf" ; then
