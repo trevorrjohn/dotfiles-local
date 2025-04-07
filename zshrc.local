@@ -111,3 +111,14 @@ fi
 if command -v nvim  > /dev/null ; then
   alias vim=nvim
 fi
+
+function tat() {
+  tmux attach-session -t $(basename "$PWD") || \
+  tmux new-session -s $(basename "$PWD") -d \; \
+    send-keys "nvim" C-m \; \
+    split-window -v -p 30 \; \
+    split-window -h \; \
+    select-pane -t 2 \; \
+    send-keys "git status" C-m \; \
+    attach-session -t $(basename "$PWD")
+}
