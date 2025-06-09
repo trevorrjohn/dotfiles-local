@@ -116,30 +116,44 @@ function tat() {
   local session_name=$(basename "$PWD")
   local window_name=$session_name
   
-  # Check if session exists
-  if tmux has-session -t "$session_name" 2>/dev/null; then
-    # Session exists, check for window name conflicts
+  # Check if we're already inside a tmux session
+  if [[ -n "$TMUX" ]]; then
+    # We're inside tmux, just rename current window and set up panes
+    local current_session=$(tmux display-message -p '#S')
+    
+    # Handle window naming conflicts within current session
     local counter=1
-    while tmux list-windows -t "$session_name" -F '#W' 2>/dev/null | grep -qx "$window_name"; do
-      window_name="${session_name}-${counter}"
+    local temp_name=$window_name
+    while tmux list-windows -t "$current_session" -F '#W' 2>/dev/null | grep -qx "$temp_name"; do
+      # Check if it's the current window
+      if [[ $(tmux display-message -p '#W') == "$temp_name" ]]; then
+        # It's the current window, we can just use this name
+        break
+      fi
+      temp_name="${window_name}-${counter}"
       ((counter++))
     done
+    window_name=$temp_name
     
-    # Create new window in existing session
-    tmux new-window -t "$session_name" -n "$window_name" -c "$PWD" \; \
-      send-keys "nvim" C-m \; \
+    # Rename current window
+    tmux rename-window "$window_name"
+    
+    # Set up the panes in current window
+    tmux send-keys "nvim" C-m \; \
       split-window -v -p 30 \; \
       split-window -h \; \
-      select-pane -t 2
-    
-    tmux attach-session -t "$session_name"
+      select-pane -t 0
   else
-    # Create new session with named window
-    tmux new-session -s "$session_name" -n "$window_name" -d \; \
-      send-keys "nvim" C-m \; \
-      split-window -v -p 30 \; \
-      split-window -h \; \
-      select-pane -t 2 \; \
-      attach-session -t "$session_name"
+    # We're outside tmux, use the original behavior
+    if tmux has-session -t "$session_name" 2>/dev/null; then
+      tmux attach-session -t "$session_name"
+    else
+      tmux new-session -s "$session_name" -n "$window_name" -d \; \
+        send-keys "nvim" C-m \; \
+        split-window -v -p 30 \; \
+        split-window -h \; \
+        select-pane -t 2 \; \
+        attach-session -t "$session_name"
+    fi
   fi
 }
