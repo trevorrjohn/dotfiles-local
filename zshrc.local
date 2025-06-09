@@ -113,12 +113,33 @@ if command -v nvim  > /dev/null ; then
 fi
 
 function tat() {
-  tmux attach-session -t $(basename "$PWD") || \
-  tmux new-session -s $(basename "$PWD") -d \; \
-    send-keys "nvim" C-m \; \
-    split-window -v -p 30 \; \
-    split-window -h \; \
-    select-pane -t 2 \; \
-    send-keys "git status" C-m \; \
-    attach-session -t $(basename "$PWD")
+  local session_name=$(basename "$PWD")
+  local window_name=$session_name
+  
+  # Check if session exists
+  if tmux has-session -t "$session_name" 2>/dev/null; then
+    # Session exists, check for window name conflicts
+    local counter=1
+    while tmux list-windows -t "$session_name" -F '#W' 2>/dev/null | grep -qx "$window_name"; do
+      window_name="${session_name}-${counter}"
+      ((counter++))
+    done
+    
+    # Create new window in existing session
+    tmux new-window -t "$session_name" -n "$window_name" -c "$PWD" \; \
+      send-keys "nvim" C-m \; \
+      split-window -v -p 30 \; \
+      split-window -h \; \
+      select-pane -t 2
+    
+    tmux attach-session -t "$session_name"
+  else
+    # Create new session with named window
+    tmux new-session -s "$session_name" -n "$window_name" -d \; \
+      send-keys "nvim" C-m \; \
+      split-window -v -p 30 \; \
+      split-window -h \; \
+      select-pane -t 2 \; \
+      attach-session -t "$session_name"
+  fi
 }
