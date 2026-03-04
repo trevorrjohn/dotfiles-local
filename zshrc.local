@@ -1,6 +1,10 @@
 # Brew path
 export PATH=/usr/local/bin:${PATH}
 
+if test -d "$HOME/.bun/bin" ; then
+  export PATH="$HOME/.bun/bin:$PATH"
+fi
+
 # GPG Key TTY
 export GPG_TTY=$(tty)
 
