@@ -4,7 +4,7 @@ set -e
 DOTFILES_LOCAL="$(cd "$(dirname "$0")" && pwd)"
 
 echo "==> Installing brew packages"
-brew install zoxide tmux hammerspoon neovim
+brew install zoxide tmux hammerspoon neovim mise
 brew install --cask font-atkinson-hyperlegible-next
 
 echo "==> Setting up Alacritty"

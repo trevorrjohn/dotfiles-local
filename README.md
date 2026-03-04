@@ -42,6 +42,7 @@ cd ~/dotfiles-local
 
 This will install and configure:
 - [Alacritty](https://alacritty.org) and [Ghostty](https://ghostty.org) terminal configs
+- [mise](https://mise.jdx.dev) for runtime/tool version management
 - [zoxide](https://github.com/ajeetdsouza/zoxide) for smarter cd
 - GPG with agent config (optional, imports key from 1Password if downloaded)
 - [tmux](https://github.com/tmux/tmux)
