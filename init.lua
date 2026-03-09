@@ -1,3 +1,5 @@
+-- Hammerspoon config
+
 require("hs.ipc")
 
 -- Reload from the command line
@@ -6,7 +8,7 @@ hs.ipc.cliInstall()
 
 hs.loadSpoon("ShiftIt")
 local obj = {}
-obj.mash = { 'ctrl', 'alt', 'cmd', 'shift' }
+obj.mash = { 'ctrl', 'cmd' }
 obj.mapping = {
   left = { obj.mash, 'left' },
   right = { obj.mash, 'right' },
@@ -26,5 +28,5 @@ obj.mapping = {
   resizeIn = { obj.mash, '-' }
 }
 
--- spoon.ShiftIt:bindHotkeys(obj.mapping);
-spoon.ShiftIt:bindHotkeys({})
+spoon.ShiftIt:bindHotkeys(obj.mapping);
+-- spoon.ShiftIt:bindHotkeys({})
