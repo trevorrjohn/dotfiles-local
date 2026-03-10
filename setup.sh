@@ -4,7 +4,16 @@ set -e
 DOTFILES_LOCAL="$(cd "$(dirname "$0")" && pwd)"
 
 echo "==> Installing brew packages"
-brew install zoxide tmux hammerspoon neovim mise
+brew install zoxide tmux neovim mise
+
+if brew list --cask hammerspoon >/dev/null 2>&1; then
+  brew install --cask hammerspoon
+elif [ -d /Applications/Hammerspoon.app ]; then
+  echo "    Hammerspoon.app already exists in /Applications, skipping brew cask install"
+else
+  brew install --cask hammerspoon
+fi
+
 brew install --cask font-atkinson-hyperlegible-next
 
 echo "==> Setting up Alacritty"
