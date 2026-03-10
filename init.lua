@@ -8,6 +8,7 @@ hs.ipc.cliInstall()
 
 hs.loadSpoon("ShiftIt")
 local obj = {}
+-- obj.mash = { 'ctrl', 'alt', 'cmd', 'shift' }
 obj.mash = { 'ctrl', 'cmd' }
 obj.mapping = {
   left = { obj.mash, 'left' },

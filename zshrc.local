@@ -30,6 +30,33 @@ if command -v brew > /dev/null ; then
   export HOMEBREW_PREFIX=/opt/homebrew
 fi
 
+if [[ "$OSTYPE" == darwin* ]]; then
+  export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+
+  if test -d "$ANDROID_SDK_ROOT"; then
+    export ANDROID_HOME="$ANDROID_SDK_ROOT"
+  elif test -d "$HOME/Android/Sdk"; then
+    export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+    export ANDROID_HOME="$ANDROID_SDK_ROOT"
+  fi
+
+  if test -d "$ANDROID_SDK_ROOT/platform-tools"; then
+    export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
+  fi
+
+  if test -d "$ANDROID_SDK_ROOT/emulator"; then
+    export PATH="$ANDROID_SDK_ROOT/emulator:$PATH"
+  fi
+
+  if test -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"; then
+    export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH"
+  fi
+fi
+
+if command -v mise > /dev/null ; then
+  eval "$(mise activate zsh)"
+fi
+
 if test -f "/usr/bin/python" ; then
   export CLOUDSDK_PYTHON="/usr/bin/python"
 fi

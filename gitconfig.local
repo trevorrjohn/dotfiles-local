@@ -16,3 +16,5 @@
   squash = commit --squash
 [core]
   whitespace = trailing-space,space-before-tab
+[push]
+  useForceIfIncludes = true
