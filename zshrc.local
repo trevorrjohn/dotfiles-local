@@ -30,10 +30,6 @@ if command -v brew > /dev/null ; then
   export HOMEBREW_PREFIX=/opt/homebrew
 fi
 
-if command -v mise > /dev/null ; then
-  eval "$(mise activate zsh)"
-fi
-
 if test -f "/usr/bin/python" ; then
   export CLOUDSDK_PYTHON="/usr/bin/python"
 fi
