@@ -18,3 +18,13 @@
   whitespace = trailing-space,space-before-tab
 [push]
   useForceIfIncludes = true
+[commit]
+  gpgsign = true
+[tag]
+  gpgsign = true
+[gpg]
+  format = ssh
+[gpg "ssh"]
+  allowedSignersFile = ~/.ssh/allowed_signers
+[user]
+  signingkey = ~/.ssh/id_ed25519_202501.pub

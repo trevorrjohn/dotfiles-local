@@ -4,21 +4,13 @@ set -e
 DOTFILES_LOCAL="$(cd "$(dirname "$0")" && pwd)"
 
 echo "==> Installing brew packages"
-brew install zoxide tmux neovim mise
+brew install zoxide tmux neovim mise ghostty gh opencode claude-code codex rcm tailscale
 
-if brew list --cask hammerspoon >/dev/null 2>&1; then
-  brew install --cask hammerspoon
-elif [ -d /Applications/Hammerspoon.app ]; then
-  echo "    Hammerspoon.app already exists in /Applications, skipping brew cask install"
-else
-  brew install --cask hammerspoon
-fi
+echo "==> Installing mac specific brew packages"
+brew install --cask alfred flycut hammerspoon arc slack signal dash
 
-brew install --cask font-atkinson-hyperlegible-next
-
-echo "==> Setting up Alacritty"
-mkdir -p ~/.config/alacritty
-ln -fs "$DOTFILES_LOCAL/alacritty.yml" ~/.config/alacritty/alacritty.yml
+mkdir -p ~/.hammerspoon
+ln -fs "$DOTFILES_LOCAL/init.lua" ~/.hammerspoon/init.lua
 
 echo "==> Setting up Ghostty"
 mkdir -p ~/.config/ghostty
@@ -47,6 +39,10 @@ curl -sL -o /tmp/ShiftIt.spoon.zip https://github.com/peterklijn/hammerspoon-shi
 unzip -o /tmp/ShiftIt.spoon.zip -d ~/.hammerspoon/Spoons/
 rm /tmp/ShiftIt.spoon.zip
 
+if pgrep -x Hammerspoon > /dev/null; then
+  hs -c "reload()"
+fi
+
 echo "==> Setting up Neovim"
 if [ ! -d ~/.config/nvim ]; then
   git clone git@github.com:trevorrjohn/nvim-config.git ~/.config/nvim
@@ -70,7 +66,8 @@ echo "==> Setting up Git SSH signing"
 git config --global gpg.format ssh
 git config --global commit.gpgsign true
 git config --global tag.gpgsign true
-existing_key=$(git config --global user.signingkey 2>/dev/null || true)
+git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
+existing_key=$(git config --get user.signingkey 2>/dev/null || true)
 if [ -n "$existing_key" ]; then
   echo "    Already configured: $existing_key"
 else
@@ -88,5 +85,24 @@ else
     echo "    Using $selected"
   fi
 fi
+
+signing_key=$(git config --get user.signingkey 2>/dev/null || true)
+git_email=$(git config --global user.email 2>/dev/null || true)
+signing_key_path="${signing_key/#\~/$HOME}"
+if [ -n "$signing_key_path" ] && [ -n "$git_email" ] && [ -f "$signing_key_path" ]; then
+  mkdir -p ~/.ssh
+  pubkey_contents=$(cat "$signing_key_path")
+  signer_line="$git_email $pubkey_contents"
+  touch ~/.ssh/allowed_signers
+  if grep -Fqx "$signer_line" ~/.ssh/allowed_signers; then
+    echo "    allowed_signers already contains $git_email"
+  else
+    printf '%s\n' "$signer_line" >> ~/.ssh/allowed_signers
+    echo "    Added $git_email to ~/.ssh/allowed_signers"
+  fi
+else
+  echo "    Skipping allowed_signers update; missing git email or signing key file"
+fi
+
 
 echo "==> Done!"

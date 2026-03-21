@@ -1,6 +1,8 @@
-# Pre-Installation
+# macOS Dotfiles
 
-Copy private/public key to .ssh dir
+This repo contains macOS-specific dotfiles and setup scripts.
+
+Copy your private/public SSH keypair to `~/.ssh`
 
 ```
 mv ssh-key.pub ssh-key ~/.ssh
@@ -19,6 +21,8 @@ EOF
 # test your connection
 ssh -T git@github.com
 ```
+
+Git commit signing in this repo uses SSH signatures, with the signing key expected at `~/.ssh/id_ed25519_202501.pub`.
 
 # Installation
 
@@ -40,6 +44,13 @@ cd ~/dotfiles-local
 ./setup.sh
 ```
 
+After setup:
+
+1. Add `~/.ssh/id_ed25519_202501.pub` as an authentication key in GitHub if you have not already.
+2. Add the same key again in GitHub under Settings -> SSH and GPG keys as a signing key.
+3. Verify signing is active with `git config --get user.signingkey` and `git config --get gpg.format`.
+4. Verify a signed commit with `git commit --allow-empty -m "test signing"` followed by `git log --show-signature -1`.
+
 This will install and configure:
 - [Alacritty](https://alacritty.org) and [Ghostty](https://ghostty.org) terminal configs
 - [mise](https://mise.jdx.dev) for runtime/tool version management
@@ -49,7 +60,7 @@ This will install and configure:
 - [Hammerspoon](https://www.hammerspoon.org) with [ShiftIt](https://github.com/peterklijn/hammerspoon-shiftit) spoon
 - [Neovim](https://neovim.io) with [config](https://github.com/trevorrjohn/nvim-config)
 - [Atkinson Hyperlegible Next](https://fonts.google.com/specimen/Atkinson+Hyperlegible+Next) font
-- Git user config (prompted during setup) with SSH commit signing
+- Git user config (prompted during setup) with SSH commit signing and `~/.ssh/allowed_signers` verification setup
 
 # Android on macOS
 
