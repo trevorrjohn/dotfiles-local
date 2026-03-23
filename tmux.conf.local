@@ -39,3 +39,11 @@ set -g focus-events on
 
 bind C-k resize-pane -U 1
 bind C-j resize-pane -D 1
+
+# Make the active window obvious in the bottom status bar.
+set -g status-position bottom
+set -g status-style "bg=colour234,fg=colour250"
+set -g window-status-format " #I:#W "
+set -g window-status-style "bg=colour234,fg=colour244"
+set -g window-status-current-format " #[bold] #I:#W #[default] "
+set -g window-status-current-style "bg=colour39,fg=colour231"
