@@ -8,7 +8,8 @@ hs.ipc.cliInstall()
 
 hs.loadSpoon("ShiftIt")
 local obj = {}
--- obj.mash = { 'ctrl', 'alt', 'cmd', 'shift' }
+-- Uncomment the next line if you want every ShiftIt binding to require shift.
+-- obj.mash = { 'ctrl', 'cmd', 'shift' }
 obj.mash = { 'ctrl', 'cmd' }
 obj.mapping = {
   left = { obj.mash, 'left' },
@@ -30,4 +31,9 @@ obj.mapping = {
 }
 
 spoon.ShiftIt:bindHotkeys(obj.mapping);
--- spoon.ShiftIt:bindHotkeys({})
+
+-- On a US keyboard, '+' is shift + '='. Bind it explicitly so cmd+ctrl++
+-- grows the focused window, while cmd+ctrl+- shrinks it.
+hs.hotkey.bind({ 'ctrl', 'cmd', 'shift' }, '=', function()
+  spoon.ShiftIt:resizeOut()
+end)
