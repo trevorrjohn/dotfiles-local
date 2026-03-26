@@ -1,7 +1,7 @@
-# Brew path
-export PATH=/usr/local/bin:${PATH}
+# Prefer Homebrew on Apple Silicon but keep legacy /usr/local available.
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
 
-if test -d "$HOME/.bun/bin" ; then
+if test -d "$HOME/.bun/bin"; then
   export PATH="$HOME/.bun/bin:$PATH"
 fi
 
@@ -12,99 +12,80 @@ function todo {
   touch ~/.todo
   local todo
   todo="$*"
-  echo $todo >> ~/.todo
+  echo "$todo" >> ~/.todo
   cat -n ~/.todo
 }
 
 # GOPATH
-if command -v go > /dev/null
-then
-  mkdir -p $HOME/workspace/go/bin
-  export GOPATH=$HOME/workspace/go
-  export PATH="${GOPATH}/bin":${PATH}
+if command -v go > /dev/null; then
+  mkdir -p "$HOME/workspace/go/bin"
+  export GOPATH="$HOME/workspace/go"
+  export PATH="${GOPATH}/bin:$PATH"
 fi
 
-# Google Cloud SDK
-
-if command -v brew > /dev/null ; then
-  export HOMEBREW_PREFIX=/opt/homebrew
+if command -v brew > /dev/null; then
+  export HOMEBREW_PREFIX="$(brew --prefix)"
 fi
 
 if [[ "$OSTYPE" == darwin* ]]; then
-  export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-
-  if test -d "$ANDROID_SDK_ROOT"; then
-    export ANDROID_HOME="$ANDROID_SDK_ROOT"
+  if test -d "$HOME/Library/Android/sdk"; then
+    export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
   elif test -d "$HOME/Android/Sdk"; then
     export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+  fi
+
+  if test -n "$ANDROID_SDK_ROOT" && test -d "$ANDROID_SDK_ROOT"; then
     export ANDROID_HOME="$ANDROID_SDK_ROOT"
-  fi
-
-  if test -d "$ANDROID_SDK_ROOT/platform-tools"; then
-    export PATH="$ANDROID_SDK_ROOT/platform-tools:$PATH"
-  fi
-
-  if test -d "$ANDROID_SDK_ROOT/emulator"; then
-    export PATH="$ANDROID_SDK_ROOT/emulator:$PATH"
-  fi
-
-  if test -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"; then
-    export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH"
+    for dir in platform-tools emulator cmdline-tools/latest/bin; do
+      if test -d "$ANDROID_SDK_ROOT/$dir"; then
+        export PATH="$ANDROID_SDK_ROOT/$dir:$PATH"
+      fi
+    done
   fi
 fi
 
-if command -v mise > /dev/null ; then
-  eval "$(mise activate zsh)"
-fi
-
-if test -f "/usr/bin/python" ; then
+if test -f "/usr/bin/python"; then
   export CLOUDSDK_PYTHON="/usr/bin/python"
 fi
 
-gcloudSdkPath="${HOMEBREW_PREFIX}/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
-if test -d "${gcloudSdkPath}"; then
-  for file in "path" "completion" ; do
-    [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
-      source "${gcloudSdkPath}/${file}.zsh.inc"
-  done
-  export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-fi
-
-if test -d "~/google-cloud-sdk/"; then
-  gcloudSdkPath="~/google-cloud-sdk"
-  for file in "path" "completion" ; do
-    [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
-      source "${gcloudSdkPath}/${file}.zsh.inc"
-  done
-fi
-
-if command -v docker-machine > /dev/null
-then
-  if docker-machine active > /dev/null 2>&1 ; then
-    eval "$(docker-machine env $(docker-machine active))"
+if test -n "$HOMEBREW_PREFIX"; then
+  gcloudSdkPath="${HOMEBREW_PREFIX}/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
+  if test -d "${gcloudSdkPath}"; then
+    for file in path completion; do
+      [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
+        source "${gcloudSdkPath}/${file}.zsh.inc"
+    done
+    export USE_GKE_GCLOUD_AUTH_PLUGIN=True
   fi
 fi
 
+if test -d "$HOME/google-cloud-sdk"; then
+  gcloudSdkPath="$HOME/google-cloud-sdk"
+  for file in path completion; do
+    [ -f "${gcloudSdkPath}/${file}.zsh.inc" ] &&
+      source "${gcloudSdkPath}/${file}.zsh.inc"
+  done
+fi
 
-if command -v tk > /dev/null
-then
+if command -v docker-machine > /dev/null; then
+  if docker-machine active > /dev/null 2>&1; then
+    eval "$(docker-machine env "$(docker-machine active)")"
+  fi
+fi
+
+if command -v tk > /dev/null; then
   tk complete 2> /dev/null
 fi
 
-if command -v kubectl > /dev/null
-then
+if command -v kubectl > /dev/null; then
   source <(kubectl completion zsh)
 fi
 
-if command -v helm > /dev/null
-then
+if command -v helm > /dev/null; then
   source <(helm completion zsh)
 fi
 
-
-# alias python="/usr/local/bin/python3"
-
-if type brew &> /dev/null ; then
+if command -v brew > /dev/null; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
   autoload -Uz compinit
@@ -112,13 +93,12 @@ if type brew &> /dev/null ; then
 fi
 
 stty icrnl
-export PATH="/usr/local/opt/node@14/bin:$PATH"
 
-if command -v ngrok &>/dev/null; then
+if command -v ngrok > /dev/null; then
   eval "$(ngrok completion)"
 fi
 
-if command -v nvim  > /dev/null ; then
+if command -v nvim > /dev/null; then
   alias vim=nvim
   export EDITOR=nvim
   export VISUAL=nvim
@@ -126,7 +106,7 @@ else
   export EDITOR=vim
 fi
 
-if command -v zoxide > /dev/null ; then
+if command -v zoxide > /dev/null; then
   eval "$(zoxide init zsh --cmd cd)"
 fi
 
@@ -176,12 +156,6 @@ function tat() {
   fi
 }
 
-export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-
-if [ -d "$ANDROID_SDK_ROOT" ]; then
-  [ -d "$ANDROID_SDK_ROOT/platform-tools" ] && PATH="$PATH:$ANDROID_SDK_ROOT/platform-tools"
-  [ -d "$ANDROID_SDK_ROOT/emulator" ] && PATH="$PATH:$ANDROID_SDK_ROOT/emulator"
-  [ -d "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" ] && PATH="$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"
+if command -v mise > /dev/null; then
+  eval "$(mise activate zsh)"
 fi
-
-export PATH
