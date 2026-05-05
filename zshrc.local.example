@@ -28,20 +28,58 @@ if command -v brew > /dev/null; then
 fi
 
 if [[ "$OSTYPE" == darwin* ]]; then
-  if test -d "$HOME/Library/Android/sdk"; then
-    export ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
-  elif test -d "$HOME/Android/Sdk"; then
-    export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+  androidDefaultSdk="$HOME/Library/Android/sdk"
+  androidLegacySdk="$HOME/Android/Sdk"
+  androidHomebrewTools=""
+
+  if test -n "$HOMEBREW_PREFIX" && test -d "$HOMEBREW_PREFIX/share/android-commandlinetools"; then
+    androidHomebrewTools="$HOMEBREW_PREFIX/share/android-commandlinetools"
   fi
 
-  if test -n "$ANDROID_SDK_ROOT" && test -d "$ANDROID_SDK_ROOT"; then
+  if test -n "$androidHomebrewTools"; then
+    if [[ "$ANDROID_HOME" == "$androidHomebrewTools" ]]; then
+      unset ANDROID_HOME
+    fi
+
+    if [[ "$ANDROID_SDK_ROOT" == "$androidHomebrewTools" ]]; then
+      unset ANDROID_SDK_ROOT
+    fi
+  fi
+
+  if test -n "$ANDROID_HOME"; then
+    export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+  elif test -n "$ANDROID_SDK_ROOT"; then
     export ANDROID_HOME="$ANDROID_SDK_ROOT"
-    for dir in platform-tools emulator cmdline-tools/latest/bin; do
+  elif test -d "$androidDefaultSdk" || test -n "$androidHomebrewTools"; then
+    export ANDROID_SDK_ROOT="$androidDefaultSdk"
+    export ANDROID_HOME="$ANDROID_SDK_ROOT"
+  elif test -d "$androidLegacySdk"; then
+    export ANDROID_SDK_ROOT="$androidLegacySdk"
+    export ANDROID_HOME="$ANDROID_SDK_ROOT"
+  fi
+
+  function add_android_path {
+    if test -d "$1"; then
+      case ":$PATH:" in
+        *":$1:"*) ;;
+        *) export PATH="$1:$PATH" ;;
+      esac
+    fi
+  }
+
+  add_android_path "$androidHomebrewTools/cmdline-tools/latest/bin"
+
+  if test -n "$ANDROID_SDK_ROOT"; then
+    export ANDROID_HOME="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+    for dir in platform-tools emulator cmdline-tools/latest/bin cmdline-tools/bin; do
       if test -d "$ANDROID_SDK_ROOT/$dir"; then
-        export PATH="$ANDROID_SDK_ROOT/$dir:$PATH"
+        add_android_path "$ANDROID_SDK_ROOT/$dir"
       fi
     done
   fi
+
+  unset -f add_android_path
+  unset androidDefaultSdk androidLegacySdk androidHomebrewTools
 fi
 
 if test -f "/usr/bin/python"; then
@@ -113,12 +151,12 @@ fi
 function tat() {
   local session_name=$(basename "$PWD")
   local window_name=$session_name
-  
+
   # Check if we're already inside a tmux session
   if [[ -n "$TMUX" ]]; then
     # We're inside tmux, just rename current window and set up panes
     local current_session=$(tmux display-message -p '#S')
-    
+
     # Handle window naming conflicts within current session
     local counter=1
     local temp_name=$window_name
@@ -132,10 +170,10 @@ function tat() {
       ((counter++))
     done
     window_name=$temp_name
-    
+
     # Rename current window
     tmux rename-window "$window_name"
-    
+
     # Set up the panes in current window
     tmux send-keys "nvim" C-m \; \
       split-window -v -p 30 \; \

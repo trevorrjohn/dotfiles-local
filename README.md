@@ -41,8 +41,11 @@ git clone git@github.com:trevorrjohn/dotfiles-local.git ~/dotfiles-local
 
 ```bash
 cd ~/dotfiles-local
+cp zshrc.local.example zshrc.local
 ./setup.sh
 ```
+
+`zshrc.local` is intentionally gitignored in this repo. Use `zshrc.local.example` as the starting point for machine-specific shell config.
 
 After setup:
 
@@ -64,7 +67,7 @@ This will install and configure:
 
 # Android on macOS
 
-`zshrc.local` is set up to use `~/Library/Android/sdk` as `ANDROID_SDK_ROOT` on macOS. When the SDK directories exist, it also adds these to `PATH` automatically:
+`zshrc.local.example` is set up to use `~/Library/Android/sdk` as `ANDROID_SDK_ROOT` on macOS. When the SDK directories exist, it also adds these to `PATH` automatically:
 
 - `platform-tools`
 - `emulator`
