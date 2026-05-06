@@ -13,7 +13,9 @@ mkdir -p ~/.hammerspoon
 ln -fs "$DOTFILES_LOCAL/init.lua" ~/.hammerspoon/init.lua
 
 echo "==> Setting up local Zsh env"
-touch "$DOTFILES_LOCAL/zshenv.local"
+if [ ! -f "$DOTFILES_LOCAL/zshenv.local" ]; then
+  cp "$DOTFILES_LOCAL/zshenv.local.example" "$DOTFILES_LOCAL/zshenv.local"
+fi
 ln -fs "$DOTFILES_LOCAL/zshenv.local" ~/.zshenv.local
 
 echo "==> Setting up Ghostty"

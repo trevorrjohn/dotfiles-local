@@ -42,12 +42,13 @@ git clone git@github.com:trevorrjohn/dotfiles-local.git ~/dotfiles-local
 ```bash
 cd ~/dotfiles-local
 cp zshrc.local.example zshrc.local
+cp zshenv.local.example zshenv.local
 ./setup.sh
 ```
 
 `zshrc.local` is intentionally gitignored in this repo. Use `zshrc.local.example` as the starting point for machine-specific shell config.
 
-`zshenv.local` is also intentionally gitignored and is symlinked to `~/.zshenv.local` by `setup.sh`. Put shell environment secrets there instead of in tracked files.
+`zshenv.local` is also intentionally gitignored in this repo. Use `zshenv.local.example` as the starting point for shell environment secrets; `setup.sh` symlinks it to `~/.zshenv.local`.
 
 After setup:
 

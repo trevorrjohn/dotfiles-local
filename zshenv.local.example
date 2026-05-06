@@ -1,0 +1,4 @@
+# Put shell environment secrets here.
+#
+# Example:
+# export SOME_API_KEY="..."
