@@ -47,6 +47,8 @@ cp zshrc.local.example zshrc.local
 
 `zshrc.local` is intentionally gitignored in this repo. Use `zshrc.local.example` as the starting point for machine-specific shell config.
 
+`zshenv.local` is also intentionally gitignored and is symlinked to `~/.zshenv.local` by `setup.sh`. Put shell environment secrets there instead of in tracked files.
+
 After setup:
 
 1. Add `~/.ssh/id_ed25519_202501.pub` as an authentication key in GitHub if you have not already.

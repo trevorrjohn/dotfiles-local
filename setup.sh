@@ -12,6 +12,10 @@ brew install --cask alfred flycut hammerspoon arc slack signal dash
 mkdir -p ~/.hammerspoon
 ln -fs "$DOTFILES_LOCAL/init.lua" ~/.hammerspoon/init.lua
 
+echo "==> Setting up local Zsh env"
+touch "$DOTFILES_LOCAL/zshenv.local"
+ln -fs "$DOTFILES_LOCAL/zshenv.local" ~/.zshenv.local
+
 echo "==> Setting up Ghostty"
 mkdir -p ~/.config/ghostty
 ln -fs "$DOTFILES_LOCAL/ghostty-config" ~/.config/ghostty/config
