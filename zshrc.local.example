@@ -130,6 +130,51 @@ if command -v brew > /dev/null; then
   compinit
 fi
 
+function __tj_git_linked_worktrees {
+  git worktree list --porcelain 2> /dev/null |
+    awk '
+      /^worktree / {
+        count++
+        if (count > 1) print substr($0, 10)
+      }
+    '
+}
+
+function _tj_git_worktree_remove {
+  local -a worktrees
+  worktrees=("${(@f)$(__tj_git_linked_worktrees)}")
+
+  if (( ${#worktrees} == 0 )); then
+    return 1
+  fi
+
+  compadd -S ' ' -a worktrees
+}
+
+function _tj_git {
+  if (( CURRENT == 2 )) && [[ -n "${words[2]}" && ( wt == "${words[2]}"* || worktree == "${words[2]}"* ) ]]; then
+    compadd -Q -S ' ' -- "worktree remove" && return 0
+  fi
+
+  if (( CURRENT == 3 )) && [[ "${words[2]}" == wt ]]; then
+    _tj_git_worktree_remove && return 0
+  fi
+
+  if (( CURRENT == 4 )) && [[ "${words[2]}" == worktree && "${words[3]}" == remove ]]; then
+    _tj_git_worktree_remove && return 0
+  fi
+
+  if whence -w _git > /dev/null; then
+    _git "$@"
+  else
+    _default "$@"
+  fi
+}
+
+if (( $+functions[compdef] )); then
+  compdef _tj_git git
+fi
+
 stty icrnl
 
 if command -v ngrok > /dev/null; then
