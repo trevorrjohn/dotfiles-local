@@ -14,11 +14,12 @@
   lg = log --graph --format='%C(bold red)%h% %C(auto)%d%Creset <%Cgreen%an> %Creset%s %Cgreen- %C(blue)%ar'
   sha = rev-parse HEAD
   squash = commit --squash
-  wt = worktree remove
 [core]
   whitespace = trailing-space,space-before-tab
 [push]
   useForceIfIncludes = true
+[rebase]
+  autoStash = true
 [commit]
   gpgsign = true
 [tag]
