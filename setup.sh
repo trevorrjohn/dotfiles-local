@@ -4,7 +4,7 @@ set -e
 DOTFILES_LOCAL="$(cd "$(dirname "$0")" && pwd)"
 
 echo "==> Installing brew packages"
-brew install zoxide tmux neovim mise ghostty gh opencode claude-code codex rcm tailscale
+brew install zoxide tmux neovim mise ghostty herdr gh opencode claude-code codex rcm tailscale
 
 echo "==> Installing mac specific brew packages"
 brew install --cask alfred flycut hammerspoon arc slack signal dash
@@ -21,6 +21,10 @@ ln -fs "$DOTFILES_LOCAL/zshenv.local" ~/.zshenv.local
 echo "==> Setting up Ghostty"
 mkdir -p ~/.config/ghostty
 ln -fs "$DOTFILES_LOCAL/ghostty-config" ~/.config/ghostty/config
+
+echo "==> Setting up Herdr"
+mkdir -p ~/.config/herdr
+ln -fs "$DOTFILES_LOCAL/herdr-config" ~/.config/herdr/config.toml
 
 echo "==> Setting up GPG (optional)"
 brew install gpg 2>/dev/null || true
