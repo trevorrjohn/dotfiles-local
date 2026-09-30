@@ -7,7 +7,12 @@ echo "==> Installing brew packages"
 brew install zoxide tmux neovim mise ghostty herdr gh opencode claude-code codex rcm tailscale
 
 echo "==> Installing mac specific brew packages"
-brew install --cask alfred flycut hammerspoon arc slack signal dash
+brew install --cask alfred flycut hammerspoon arc slack signal
+if [ -d /Applications/Dash.app ] && ! brew list --cask dash >/dev/null 2>&1; then
+  echo "    Dash is already installed outside Homebrew, skipping"
+else
+  brew install --cask dash
+fi
 
 mkdir -p ~/.hammerspoon
 ln -fs "$DOTFILES_LOCAL/init.lua" ~/.hammerspoon/init.lua
@@ -24,7 +29,9 @@ ln -fs "$DOTFILES_LOCAL/ghostty-config" ~/.config/ghostty/config
 
 echo "==> Setting up Herdr"
 mkdir -p ~/.config/herdr
-ln -fs "$DOTFILES_LOCAL/herdr-config" ~/.config/herdr/config.toml
+rm -f ~/.config/herdr/config.toml
+ln -s "$DOTFILES_LOCAL/herdr-config" ~/.config/herdr/config.toml
+herdr server reload-config 2>/dev/null || true
 
 echo "==> Setting up GPG (optional)"
 brew install gpg 2>/dev/null || true
