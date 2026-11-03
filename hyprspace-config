@@ -14,27 +14,24 @@ config-version = 2
 start-at-login = true
 persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 
-
-
 # Hold alt and drag from anywhere inside a tiled window to move and reinsert it at the drop point.
 [mouse-drag]
 enabled = true
 modifier = 'alt'
 
 [gaps]
-inner.horizontal = 14
-inner.vertical = 14
+inner.horizontal = 8
+inner.vertical = 8
 outer.left = 8
 outer.right = 8
 outer.bottom = 8
-outer.top = [{ monitor."built-in" = 8 }, { monitor."main" = 24 }, 24]
+outer.top = [{ monitor."built-in" = 4 }, { monitor."main" = 4 }, 4]
 
 # ---------- MAIN KEY BINDINGS -----------
 
 [mode.main.binding]
 alt-enter = 'new-window-or-open Ghostty'
-alt-b = 'new-window-or-open Safari'
-alt-m = 'new-window-or-open Music'
+alt-shift-b = 'new-window-or-open Safari'
 alt-shift-p = 'open-terminal Ghostty btop'
 
 alt-1 = 'workspace 1'
@@ -70,10 +67,10 @@ alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
 # Swap the focused window with its neighbor.
-alt-shift-left = 'swap left'
-alt-shift-right = 'swap right'
-alt-shift-up = 'swap up'
-alt-shift-down = 'swap down'
+alt-shift-left = 'move left'
+alt-shift-right = 'move right'
+alt-shift-up = 'move up'
+alt-shift-down = 'move down'
 
 alt-tab = 'focus-back-and-forth'
 alt-shift-space = 'layout floating tiling'
