@@ -72,7 +72,6 @@ alt-shift-right = 'move right'
 alt-shift-up = 'move up'
 alt-shift-down = 'move down'
 
-alt-tab = 'focus-back-and-forth'
 alt-shift-space = 'layout floating tiling'
 alt-shift-semicolon = 'mode service'
 alt-shift-slash = 'layout tiles horizontal vertical'
@@ -104,10 +103,6 @@ run = ["layout floating"]
 
 [[on-window-detected]]
 if.app-id = "com.apple.MobileSMS"
-run = ["layout floating"]
-
-[[on-window-detected]]
-if.app-id = 'com.apple.iphonesimulator'
 run = ["layout floating"]
 
 #[[on-window-detected]]

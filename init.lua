@@ -38,6 +38,13 @@ hs.hotkey.bind({ 'ctrl', 'cmd', 'shift' }, '=', function()
   spoon.ShiftIt:resizeOut()
 end)
 
+-- Bring Device Hub forward, including its simulator windows when macOS allows it.
+hs.hotkey.bind({ 'alt', 'shift' }, 'd', function()
+  local ok, _, errorMessage = hs.osascript.applescript(
+    'tell application id "com.apple.dt.Devices" to activate')
+  if not ok then hs.alert.show('Could not open Device Hub: ' .. tostring(errorMessage)) end
+end)
+
 -- Command-Tab cycles Hyprspace workspaces. Command-Option-Tab forwards to
 -- Apple's app switcher. Disable with workspaceSwitcher.stop() in the console.
 workspaceSwitcher = {}
@@ -48,7 +55,15 @@ do
   local workspaceOrder = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }
   local order = {}
   local apps, focused, selected = {}, '1', 1
-  local active, native, pending, generation = false, false, 0, 0
+  local active, native, nativeAlt, pending, generation = false, false, false, 0, 0
+  local syntheticTag = 0x57535043
+  local tagProperty = hs.eventtap.event.properties.eventSourceUserData
+  local function postNative(key, down, shift)
+    local modifiers = key == 'cmd' and {} or { 'cmd' }
+    if shift then table.insert(modifiers, 'shift') end
+    hs.eventtap.event.newKeyEvent(modifiers, key, down)
+      :setProperty(tagProperty, syntheticTag):post()
+  end
   local canvas, query, focusQuery, switchTask
   local logger = hs.logger.new('workspace-switcher', 'warning')
 
@@ -157,9 +172,15 @@ do
 
   state.tap = hs.eventtap.new({ hs.eventtap.event.types.keyDown,
     hs.eventtap.event.types.keyUp, hs.eventtap.event.types.flagsChanged }, function(event)
+    if event:getProperty(tagProperty) == syntheticTag then return false end
     local flags, kind, key = event:getFlags(), event:getType(), event:getKeyCode()
     if kind == hs.eventtap.event.types.flagsChanged then
-      if native then
+      if nativeAlt then
+        if not flags.alt then
+          nativeAlt = false
+          postNative('cmd', false)
+        end
+      elseif native then
         flags.alt = nil
         event:setFlags(flags)
         if not flags.cmd then native = false end
@@ -170,6 +191,24 @@ do
         switchTask:start()
       end
       return false
+    end
+    if key == hs.keycodes.map.tab and flags.alt and not flags.cmd and not flags.ctrl then
+      if kind == hs.eventtap.event.types.keyDown then
+        if not nativeAlt then
+          if active then hide() end
+          nativeAlt = true
+          postNative('cmd', true)
+        end
+        postNative('tab', true, flags.shift)
+      else
+        postNative('tab', false, flags.shift)
+      end
+      return true
+    end
+    if nativeAlt and key == hs.keycodes.map.escape then
+      if kind == hs.eventtap.event.types.keyDown then postNative('escape', true)
+      else postNative('escape', false) end
+      return true
     end
     if key == hs.keycodes.map.tab and flags.cmd then
       if native or flags.alt then
@@ -197,6 +236,7 @@ do
   function state.stop()
     state.tap:stop()
     hide()
+    if nativeAlt then nativeAlt = false; postNative('cmd', false) end
     if query then query:terminate(); query = nil end
     if focusQuery then focusQuery:terminate(); focusQuery = nil end
   end
