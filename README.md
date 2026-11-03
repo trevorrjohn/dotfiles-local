@@ -152,4 +152,4 @@ Option-Tab opens Apple’s app switcher; keep Option held and use Tab as usual. 
 
 To disable both mappings until the next Hammerspoon reload, run `hs -c "workspaceSwitcher.stop()"`. Reload with `hs -c "hs.reload()"`. Hammerspoon needs Accessibility permission; Secure Input can prevent these shortcuts from being observed.
 
-Option-Shift-D activates Device Hub to bring its simulator windows forward. Device Hub does not expose these windows to Hyprspace, so this shortcut activates the app rather than moving its windows between Hyprspace workspaces.
+Option-Shift-D brings Device Hub and its simulator windows to the current Hyprspace workspace; press it again while Device Hub is frontmost to hide it.

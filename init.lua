@@ -6,12 +6,58 @@ require("hs.ipc")
 -- hs -c "hs.reload()"
 hs.ipc.cliInstall()
 
--- Bring Device Hub forward, including its simulator windows when macOS allows it.
-hs.hotkey.bind({ 'alt', 'shift' }, 'd', function()
-  local ok, _, errorMessage = hs.osascript.applescript(
-    'tell application id "com.apple.dt.Devices" to activate')
-  if not ok then hs.alert.show('Could not open Device Hub: ' .. tostring(errorMessage)) end
-end)
+-- Toggle Device Hub: activate it, or hide it when already frontmost.
+local deviceHubTask
+local deviceHubShown = false
+local function toggleDeviceHub()
+  if deviceHubTask then return end
+  local focusedWorkspace = hs.execute('/opt/homebrew/bin/hyprspace list-workspaces --focused')
+    :match('^[0-9]')
+  if not focusedWorkspace then
+    hs.alert.show('Could not determine the current workspace')
+    return
+  end
+  local show = not deviceHubShown
+  local script = show and [[
+    set -euo pipefail
+    workspace="$1"
+    /opt/homebrew/bin/hyprspace list-windows --all \
+      --format '%{window-id} %{app-bundle-id}' --json |
+      /usr/bin/jq -r '.[] | select(."app-bundle-id" == "com.apple.dt.Devices") | ."window-id"' |
+      while IFS= read -r window_id; do
+        /opt/homebrew/bin/hyprspace move-node-to-workspace --window-id "$window_id" "$workspace" || exit 1
+      done
+    /usr/bin/osascript -e 'tell application id "com.apple.dt.Devices" to activate'
+    window_id=$(/opt/homebrew/bin/hyprspace list-windows --all \
+      --format '%{window-id} %{app-bundle-id}' --json |
+      /usr/bin/jq -r 'first(.[] | select(."app-bundle-id" == "com.apple.dt.Devices") | ."window-id") // empty')
+    if [ -n "$window_id" ]; then
+      /opt/homebrew/bin/hyprspace focus --window-id "$window_id"
+    fi
+  ]] or [[
+    set -euo pipefail
+    workspace="$1"
+    fallback=$(/opt/homebrew/bin/hyprspace list-windows --workspace "$workspace" \
+      --format '%{window-id} %{app-bundle-id}' --json |
+      /usr/bin/jq -r 'first(.[] | select(."app-bundle-id" != "com.apple.dt.Devices") | ."window-id") // empty')
+    if [ -n "$fallback" ]; then
+      /opt/homebrew/bin/hyprspace focus --window-id "$fallback"
+    fi
+    /usr/bin/osascript -e 'tell application "System Events" to set visible of process "Device Hub" to false'
+    if [ -z "$fallback" ]; then
+      /opt/homebrew/bin/hyprspace workspace "$workspace"
+    fi
+  ]]
+  deviceHubShown = show
+  deviceHubTask = hs.task.new('/bin/bash', function(code, _, stderr)
+    deviceHubTask = nil
+    if code ~= 0 then
+      deviceHubShown = not show
+      hs.alert.show('Device Hub toggle failed: ' .. stderr)
+    end
+  end, { '-c', script, 'device-hub-toggle', focusedWorkspace })
+  if not deviceHubTask:start() then deviceHubTask = nil; deviceHubShown = not show end
+end
 
 -- Command-Tab cycles Hyprspace workspaces. Command-Option-Tab forwards to
 -- Apple's app switcher. Disable with workspaceSwitcher.stop() in the console.
@@ -142,6 +188,11 @@ do
     hs.eventtap.event.types.keyUp, hs.eventtap.event.types.flagsChanged }, function(event)
     if event:getProperty(tagProperty) == syntheticTag then return false end
     local flags, kind, key = event:getFlags(), event:getType(), event:getKeyCode()
+    if key == hs.keycodes.map.d and flags.alt and flags.shift
+        and not flags.cmd and not flags.ctrl then
+      if kind == hs.eventtap.event.types.keyDown then toggleDeviceHub() end
+      return true
+    end
     if kind == hs.eventtap.event.types.flagsChanged then
       if nativeAlt then
         if not flags.alt then
