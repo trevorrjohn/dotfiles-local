@@ -59,11 +59,7 @@ else
 fi
 
 echo "==> Setting up Hammerspoon"
-mkdir -p ~/.hammerspoon/Spoons
 ln -fs "$DOTFILES_LOCAL/init.lua" ~/.hammerspoon/init.lua
-curl -sL -o /tmp/ShiftIt.spoon.zip https://github.com/peterklijn/hammerspoon-shiftit/raw/master/Spoons/ShiftIt.spoon.zip
-unzip -o /tmp/ShiftIt.spoon.zip -d ~/.hammerspoon/Spoons/
-rm /tmp/ShiftIt.spoon.zip
 
 if pgrep -x Hammerspoon > /dev/null; then
   hs -c "reload()"

@@ -65,7 +65,7 @@ This will install and configure:
 - [zoxide](https://github.com/ajeetdsouza/zoxide) for smarter cd
 - GPG with agent config (optional, imports key from 1Password if downloaded)
 - [tmux](https://github.com/tmux/tmux)
-- [Hammerspoon](https://www.hammerspoon.org) with [ShiftIt](https://github.com/peterklijn/hammerspoon-shiftit) spoon
+- [Hammerspoon](https://www.hammerspoon.org) for workspace switching and the Device Hub shortcut
 - [Neovim](https://neovim.io) with [config](https://github.com/trevorrjohn/nvim-config)
 - [Atkinson Hyperlegible Next](https://fonts.google.com/specimen/Atkinson+Hyperlegible+Next) font
 - Git user config (prompted during setup) with SSH commit signing and `~/.ssh/allowed_signers` verification setup
