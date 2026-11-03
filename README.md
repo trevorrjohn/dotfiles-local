@@ -59,6 +59,7 @@ After setup:
 
 This will install and configure:
 - [Alacritty](https://alacritty.org) and [Ghostty](https://ghostty.org) terminal configs
+- Hyprspace window manager (`hyprspace-config` → `~/.config/hyprspace/config.toml`), with persistent workspaces 1–9 and 0; use Alt+number to switch and Alt+Shift+number to move a window
 - [Herdr](https://herdr.dev) with tmux-style keybindings and terminal/UI preferences
 - [mise](https://mise.jdx.dev) for runtime/tool version management
 - [zoxide](https://github.com/ajeetdsouza/zoxide) for smarter cd

@@ -27,6 +27,15 @@ echo "==> Setting up Ghostty"
 mkdir -p ~/.config/ghostty
 ln -fs "$DOTFILES_LOCAL/ghostty-config" ~/.config/ghostty/config
 
+echo "==> Setting up Hyprspace"
+brew install --cask peachlifeab/tap/hyprspace
+mkdir -p ~/.config/hyprspace
+if [ -e ~/.config/hyprspace/config.toml ] && [ ! -L ~/.config/hyprspace/config.toml ]; then
+  mv ~/.config/hyprspace/config.toml ~/.config/hyprspace/config.toml.backup-"$(date +%Y%m%d%H%M%S)"
+fi
+ln -fs "$DOTFILES_LOCAL/hyprspace-config" ~/.config/hyprspace/config.toml
+hyprspace reload-config 2>/dev/null || true
+
 echo "==> Setting up Herdr"
 mkdir -p ~/.config/herdr
 rm -f ~/.config/herdr/config.toml
