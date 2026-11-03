@@ -102,25 +102,5 @@ if.app-id = "com.apple.ScreenSharing"
 run = ["layout floating"]
 
 [[on-window-detected]]
-if.app-id = "com.apple.MobileSMS"
-run = ["layout floating"]
-
-#[[on-window-detected]]
-#if.app-id = 'com.tinyspeck.slackmacgap'
-#run = ['layout floating']
-
-[[on-window-detected]]
-if.app-id = "com.microsoft.teams2"
-run = ["layout floating"]
-
-[[on-window-detected]]
-if.app-id = 'com.macpaw.CleanMyMac'
-run = ["layout floating"]
-
-[[on-window-detected]]
-if.app-id = "com.macpaw.CleanMyMac4"
-run = ["layout floating"]
-
-[[on-window-detected]]
 if.app-id = "com.apple.QuickTimePlayerX"
 run = ["layout floating"]
