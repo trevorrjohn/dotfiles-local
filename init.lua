@@ -37,3 +37,168 @@ spoon.ShiftIt:bindHotkeys(obj.mapping);
 hs.hotkey.bind({ 'ctrl', 'cmd', 'shift' }, '=', function()
   spoon.ShiftIt:resizeOut()
 end)
+
+-- Command-Tab cycles Hyprspace workspaces. Command-Option-Tab forwards to
+-- Apple's app switcher. Disable with workspaceSwitcher.stop() in the console.
+workspaceSwitcher = {}
+do
+  local state = workspaceSwitcher
+  local cli = hs.fs.attributes('/opt/homebrew/bin/hyprspace') and
+    '/opt/homebrew/bin/hyprspace' or '/usr/local/bin/hyprspace'
+  local workspaceOrder = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }
+  local order = {}
+  local apps, focused, selected = {}, '1', 1
+  local active, native, pending, generation = false, false, 0, 0
+  local canvas, query, focusQuery, switchTask
+  local logger = hs.logger.new('workspace-switcher', 'warning')
+
+  local function hide()
+    active, pending = false, 0
+    generation = generation + 1
+    if canvas then canvas:delete(); canvas = nil end
+  end
+
+  local function draw()
+    if canvas then canvas:delete() end
+    local frame = hs.mouse.getCurrentScreen():fullFrame()
+    local width = math.min(680, frame.w - 40)
+    local height = 64 + #order * 37
+    canvas = hs.canvas.new({ x = frame.x + (frame.w - width) / 2,
+      y = frame.y + math.max(30, (frame.h - height) / 2), w = width, h = height })
+    canvas:level('overlay')
+    canvas:behavior({ 'canJoinAllSpaces', 'fullScreenAuxiliary', 'ignoresCycle' })
+    canvas:clickActivating(false)
+    canvas:appendElements({ type = 'rectangle', action = 'fill',
+      roundedRectRadii = { xRadius = 16, yRadius = 16 },
+      fillColor = { white = 0.08, alpha = 0.96 } },
+      { type = 'text', text = 'Workspaces · release ⌘ to switch · Esc to cancel',
+        textSize = 16, textColor = { white = 0.85 },
+        frame = { x = 20, y = 16, w = width - 40, h = 26 } })
+    for i, workspace in ipairs(order) do
+      local y = 54 + (i - 1) * 37
+      if i == selected then
+        canvas:appendElements({ type = 'rectangle', action = 'fill',
+          fillColor = { red = 0.18, green = 0.38, blue = 0.65, alpha = 0.9 },
+          roundedRectRadii = { xRadius = 7, yRadius = 7 },
+          frame = { x = 10, y = y - 2, w = width - 20, h = 34 } })
+      end
+      local names = apps[workspace] or {}
+      canvas:appendElements({ type = 'text',
+        text = workspace .. '   ⌥' .. workspace .. '     ' ..
+          (#names > 0 and table.concat(names, ' · ') or 'Empty'),
+        textSize = 15, textColor = { white = i == selected and 1 or 0.7 },
+        frame = { x = 22, y = y + 3, w = width - 44, h = 25 } })
+    end
+    canvas:show()
+  end
+
+  local function advance(delta)
+    selected = ((selected - 1 + delta) % #order) + 1
+  end
+
+  local function begin(delta)
+    if active then
+      if query or focusQuery then pending = pending + delta else advance(delta); draw() end
+      return
+    end
+    active, pending = true, delta
+    generation = generation + 1
+    local currentGeneration = generation
+    -- Both queries are asynchronous: no shell or blocking work in the event tap.
+    focusQuery = hs.task.new(cli, function(code, output)
+      focusQuery = nil
+      if code == 0 then focused = output:match('%S+') or focused end
+      if not active or generation ~= currentGeneration then return end
+      query = hs.task.new(cli, function(exitCode, stdout, stderr)
+        query = nil
+        if not active or generation ~= currentGeneration then return end
+        if exitCode ~= 0 then logger.e(stderr); hide(); return end
+        local ok, windows = pcall(hs.json.decode, stdout)
+        if not ok or type(windows) ~= 'table' then hide(); return end
+        apps = {}
+        local seen = {}
+        for _, window in ipairs(windows) do
+          local workspace, name = window.workspace, window['app-name']
+          if workspace and name then
+            apps[workspace], seen[workspace] = apps[workspace] or {}, seen[workspace] or {}
+            if not seen[workspace][name] then
+              table.insert(apps[workspace], name)
+              seen[workspace][name] = true
+            end
+          end
+        end
+        for _, names in pairs(apps) do table.sort(names) end
+        order = {}
+        for _, workspace in ipairs(workspaceOrder) do
+          if apps[workspace] and #apps[workspace] > 0 then
+            table.insert(order, workspace)
+          end
+        end
+        if #order == 0 then hide(); return end
+        -- If the current workspace is empty, start at the first/last occupied one.
+        selected = pending < 0 and 1 or 0
+        for i, workspace in ipairs(order) do
+          if workspace == focused then selected = i; break end
+        end
+        advance(pending); pending = 0
+        -- A quick tap still commits after the query finishes.
+        if not hs.eventtap.checkKeyboardModifiers().cmd then
+          local target = order[selected]
+          hide()
+          switchTask = hs.task.new(cli, function() switchTask = nil end,
+            { 'workspace', target })
+          switchTask:start()
+        else draw() end
+      end, { 'list-windows', '--all', '--format', '%{app-name} %{workspace}', '--json' })
+      if not query:start() then query = nil; hide() end
+    end, { 'list-workspaces', '--focused' })
+    if not focusQuery:start() then focusQuery = nil; hide() end
+  end
+
+  state.tap = hs.eventtap.new({ hs.eventtap.event.types.keyDown,
+    hs.eventtap.event.types.keyUp, hs.eventtap.event.types.flagsChanged }, function(event)
+    local flags, kind, key = event:getFlags(), event:getType(), event:getKeyCode()
+    if kind == hs.eventtap.event.types.flagsChanged then
+      if native then
+        flags.alt = nil
+        event:setFlags(flags)
+        if not flags.cmd then native = false end
+      elseif active and not flags.cmd and not query and not focusQuery then
+        local target = order[selected]
+        hide()
+        switchTask = hs.task.new(cli, function() switchTask = nil end, { 'workspace', target })
+        switchTask:start()
+      end
+      return false
+    end
+    if key == hs.keycodes.map.tab and flags.cmd then
+      if native or flags.alt then
+        if active then hide() end
+        native = true
+        flags.alt = nil
+        event:setFlags(flags)
+        return false
+      end
+      if kind == hs.eventtap.event.types.keyDown and not flags.ctrl then
+        begin(flags.shift and -1 or 1)
+        return true
+      elseif kind == hs.eventtap.event.types.keyUp and active then return true end
+    end
+    if active and kind == hs.eventtap.event.types.keyDown and key == hs.keycodes.map.escape then
+      hide()
+      return true
+    end
+    return false
+  end)
+  function state.status()
+    return { active = active, native = native, visible = canvas ~= nil,
+      selected = order[selected], loading = query ~= nil or focusQuery ~= nil }
+  end
+  function state.stop()
+    state.tap:stop()
+    hide()
+    if query then query:terminate(); query = nil end
+    if focusQuery then focusQuery:terminate(); focusQuery = nil end
+  end
+  state.tap:start()
+end

@@ -143,3 +143,11 @@ List available emulators:
 ```bash
 emulator -list-avds
 ```
+
+## Workspace switcher
+
+Hammerspoon maps Command-Tab to a Hyprspace workspace switcher showing the apps on workspaces 1–9 and 0. Keep Command held and tap Tab to advance (Shift-Tab reverses), then release Command to switch. Escape cancels. Empty workspaces are hidden from the switcher; Alt+number still opens them.
+
+Command-Option-Tab opens Apple’s app switcher; keep Command held and use Tab as usual. This forwards keyboard events to macOS rather than replacing Apple’s switcher.
+
+To disable both mappings until the next Hammerspoon reload, run `hs -c "workspaceSwitcher.stop()"`. Reload with `hs -c "hs.reload()"`. Hammerspoon needs Accessibility permission; Secure Input can prevent these shortcuts from being observed.
