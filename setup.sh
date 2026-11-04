@@ -3,6 +3,49 @@ set -e
 
 DOTFILES_LOCAL="$(cd "$(dirname "$0")" && pwd)"
 
+case "${1:-}" in
+  ""|--links-only) ;;
+  *) echo "Usage: $0 [--links-only]" >&2; exit 1 ;;
+esac
+
+# Apply local config before any package install can fail.
+link_config() {
+  local source="$1" destination="$2" backup
+  mkdir -p "$(dirname "$destination")"
+  if [ -e "$destination" ] && [ ! -L "$destination" ]; then
+    backup="$(mktemp -d "${destination}.backup-XXXXXXXX")"
+    mv "$destination" "$backup/$(basename "$destination")"
+    echo "    Backed up $destination to $backup"
+  fi
+  ln -sfn "$source" "$destination"
+}
+
+echo "==> Linking local configs"
+if [ ! -f "$DOTFILES_LOCAL/zshenv.local" ]; then
+  cp "$DOTFILES_LOCAL/zshenv.local.example" "$DOTFILES_LOCAL/zshenv.local"
+fi
+link_config "$DOTFILES_LOCAL/zshenv.local" "$HOME/.zshenv.local"
+link_config "$DOTFILES_LOCAL/init.lua" "$HOME/.hammerspoon/init.lua"
+link_config "$DOTFILES_LOCAL/ghostty-config" "$HOME/.config/ghostty/config"
+link_config "$DOTFILES_LOCAL/hyprspace-config" "$HOME/.config/hyprspace/config.toml"
+link_config "$DOTFILES_LOCAL/herdr-config" "$HOME/.config/herdr/config.toml"
+link_config "$DOTFILES_LOCAL/gpg-agent.conf" "$HOME/.gnupg/gpg-agent.conf"
+
+reload_configs() {
+  if command -v hyprspace >/dev/null 2>&1; then
+    hyprspace reload-config || echo "    Hyprspace reload failed; config is linked."
+  fi
+  if command -v herdr >/dev/null 2>&1; then
+    herdr server reload-config || echo "    Herdr reload failed; config is linked."
+  fi
+}
+reload_configs
+
+if [ "${1:-}" = --links-only ]; then
+  echo "==> Config links updated!"
+  exit 0
+fi
+
 echo "==> Installing brew packages"
 brew install zoxide tmux neovim mise ghostty herdr gh opencode claude-code codex rcm tailscale
 
@@ -14,38 +57,13 @@ else
   brew install --cask dash
 fi
 
-mkdir -p ~/.hammerspoon
-ln -fs "$DOTFILES_LOCAL/init.lua" ~/.hammerspoon/init.lua
-
-echo "==> Setting up local Zsh env"
-if [ ! -f "$DOTFILES_LOCAL/zshenv.local" ]; then
-  cp "$DOTFILES_LOCAL/zshenv.local.example" "$DOTFILES_LOCAL/zshenv.local"
-fi
-ln -fs "$DOTFILES_LOCAL/zshenv.local" ~/.zshenv.local
-
-echo "==> Setting up Ghostty"
-mkdir -p ~/.config/ghostty
-ln -fs "$DOTFILES_LOCAL/ghostty-config" ~/.config/ghostty/config
-
-echo "==> Setting up Hyprspace"
+echo "==> Installing Hyprspace"
 brew install --cask peachlifeab/tap/hyprspace
-mkdir -p ~/.config/hyprspace
-if [ -e ~/.config/hyprspace/config.toml ] && [ ! -L ~/.config/hyprspace/config.toml ]; then
-  mv ~/.config/hyprspace/config.toml ~/.config/hyprspace/config.toml.backup-"$(date +%Y%m%d%H%M%S)"
-fi
-ln -fs "$DOTFILES_LOCAL/hyprspace-config" ~/.config/hyprspace/config.toml
-hyprspace reload-config 2>/dev/null || true
-
-echo "==> Setting up Herdr"
-mkdir -p ~/.config/herdr
-rm -f ~/.config/herdr/config.toml
-ln -s "$DOTFILES_LOCAL/herdr-config" ~/.config/herdr/config.toml
-herdr server reload-config 2>/dev/null || true
+reload_configs
 
 echo "==> Setting up GPG (optional)"
 brew install gpg 2>/dev/null || true
 mkdir -p ~/.gpg-keys ~/.gnupg
-ln -fs "$DOTFILES_LOCAL/gpg-agent.conf" ~/.gnupg/gpg-agent.conf
 if [ -f ~/Downloads/trevor-gpg-private.asc ] || [ -f ~/Downloads/trevor-gpg-public.asc ]; then
   mv -f ~/Downloads/trevor-gpg-private.asc ~/Downloads/trevor-gpg-public.asc ~/.gpg-keys/ 2>/dev/null || true
 fi
@@ -59,7 +77,6 @@ else
 fi
 
 echo "==> Setting up Hammerspoon"
-ln -fs "$DOTFILES_LOCAL/init.lua" ~/.hammerspoon/init.lua
 
 if pgrep -x Hammerspoon > /dev/null; then
   hs -c "reload()"

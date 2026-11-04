@@ -46,6 +46,17 @@ cp zshenv.local.example zshenv.local
 ./setup.sh
 ```
 
+Config links are applied before package installation, so a Homebrew failure does not
+prevent them from being updated. To refresh only the local config links:
+
+```bash
+./setup.sh --links-only
+```
+
+Existing files or directories at config destinations are moved into uniquely named
+backup directories beside the links. Hyprspace and Herdr are reloaded when available;
+reload failures are reported without undoing the links.
+
 `zshrc.local` is intentionally gitignored in this repo. Use `zshrc.local.example` as the starting point for machine-specific shell config.
 
 `zshenv.local` is also intentionally gitignored in this repo. Use `zshenv.local.example` as the starting point for shell environment secrets; `setup.sh` symlinks it to `~/.zshenv.local`.
