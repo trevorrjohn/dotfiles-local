@@ -47,10 +47,17 @@ if [ "${1:-}" = --links-only ]; then
 fi
 
 echo "==> Installing brew packages"
-brew install zoxide tmux neovim mise ghostty herdr gh opencode claude-code codex rcm tailscale
+brew install zoxide tmux neovim mise ghostty herdr gh claude-code codex rcm tailscale
+
+# Keep an existing OpenCode installation regardless of its source tap.
+if brew list --formula opencode >/dev/null 2>&1; then
+  echo "    OpenCode is already installed, skipping"
+else
+  brew install opencode
+fi
 
 echo "==> Installing mac specific brew packages"
-brew install --cask alfred flycut hammerspoon arc slack signal
+brew install --cask flycut hammerspoon slack signal
 if [ -d /Applications/Dash.app ] && ! brew list --cask dash >/dev/null 2>&1; then
   echo "    Dash is already installed outside Homebrew, skipping"
 else
@@ -64,12 +71,15 @@ reload_configs
 echo "==> Setting up GPG (optional)"
 brew install gpg 2>/dev/null || true
 mkdir -p ~/.gpg-keys ~/.gnupg
+chmod 700 ~/.gpg-keys ~/.gnupg
 if [ -f ~/Downloads/trevor-gpg-private.asc ] || [ -f ~/Downloads/trevor-gpg-public.asc ]; then
   mv -f ~/Downloads/trevor-gpg-private.asc ~/Downloads/trevor-gpg-public.asc ~/.gpg-keys/ 2>/dev/null || true
 fi
 if [ -f ~/.gpg-keys/trevor-gpg-public.asc ]; then
   gpg --import ~/.gpg-keys/trevor-gpg-public.asc
-  gpg --import ~/.gpg-keys/trevor-gpg-private.asc
+  if [ -f ~/.gpg-keys/trevor-gpg-private.asc ]; then
+    gpg --import ~/.gpg-keys/trevor-gpg-private.asc
+  fi
 else
   echo "    Skipping GPG key import. To set up GPG manually:"
   echo "      1. Download trevor-gpg-private.asc and trevor-gpg-public.asc from 1Password to ~/Downloads"
@@ -79,7 +89,12 @@ fi
 echo "==> Setting up Hammerspoon"
 
 if pgrep -x Hammerspoon > /dev/null; then
-  hs -c "reload()"
+  if ! hs -c "hs.reload()"; then
+    echo "    Could not reload Hammerspoon through IPC."
+    echo "    Choose Reload Config from the Hammerspoon menu to load the linked config and enable IPC."
+  fi
+else
+  echo "    Start Hammerspoon to load the linked config."
 fi
 
 echo "==> Setting up Neovim"
