@@ -19,6 +19,8 @@
   whitespace = trailing-space,space-before-tab
 [push]
   useForceIfIncludes = true
+[pull]
+  autoStash = true
 [rebase]
   autoStash = true
 [commit]
