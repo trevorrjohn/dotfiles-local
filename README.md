@@ -157,7 +157,7 @@ emulator -list-avds
 
 ## Workspace switcher
 
-Hammerspoon maps Command-Tab to a Hyprspace workspace switcher showing the apps on workspaces 1–9 and 0. Keep Command held and tap Tab to advance (Shift-Tab reverses), then release Command to switch. Escape cancels. Empty workspaces are hidden from the switcher; Alt+number still opens them.
+Hammerspoon maps Command-Tab to a Hyprspace workspace switcher showing the apps on workspaces 1–9 and 0. The first Command-Tab highlights the active workspace. Keep Command held and tap Tab again to advance (Shift-Tab reverses), then release Command to switch. Escape cancels. Empty workspaces other than the active workspace are hidden from the switcher; Alt+number still opens them.
 
 Option-Tab opens Apple’s app switcher; keep Option held and use Tab as usual. Shift-Tab cycles backward, releasing Option selects, and Escape cancels. Command-Option-Tab also opens Apple’s app switcher.
 

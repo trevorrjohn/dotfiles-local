@@ -68,7 +68,7 @@ do
     '/opt/homebrew/bin/hyprspace' or '/usr/local/bin/hyprspace'
   local workspaceOrder = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' }
   local order = {}
-  local apps, focused, selected = {}, '1', 1
+  local apps, focused, selected = {}, nil, 1
   local active, native, nativeAlt, pending, generation = false, false, false, 0, 0
   local syntheticTag = 0x57535043
   local tagProperty = hs.eventtap.event.properties.eventSourceUserData
@@ -130,14 +130,20 @@ do
       if query or focusQuery then pending = pending + delta else advance(delta); draw() end
       return
     end
-    active, pending = true, delta
+    -- The first Tab opens on the current workspace; later Tabs cycle.
+    active, pending = true, 0
     generation = generation + 1
     local currentGeneration = generation
     -- Both queries are asynchronous: no shell or blocking work in the event tap.
     focusQuery = hs.task.new(cli, function(code, output)
       focusQuery = nil
-      if code == 0 then focused = output:match('%S+') or focused end
       if not active or generation ~= currentGeneration then return end
+      focused = code == 0 and output:match('^%s*(%S+)%s*$') or nil
+      if not focused then
+        logger.e('Could not determine the active Hyprspace workspace')
+        hide()
+        return
+      end
       query = hs.task.new(cli, function(exitCode, stdout, stderr)
         query = nil
         if not active or generation ~= currentGeneration then return end
@@ -159,13 +165,13 @@ do
         for _, names in pairs(apps) do table.sort(names) end
         order = {}
         for _, workspace in ipairs(workspaceOrder) do
-          if apps[workspace] and #apps[workspace] > 0 then
+          if workspace == focused or (apps[workspace] and #apps[workspace] > 0) then
             table.insert(order, workspace)
           end
         end
         if #order == 0 then hide(); return end
-        -- If the current workspace is empty, start at the first/last occupied one.
-        selected = pending < 0 and 1 or 0
+        -- Keep the active workspace selectable even when it is empty.
+        selected = 1
         for i, workspace in ipairs(order) do
           if workspace == focused then selected = i; break end
         end
